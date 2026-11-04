@@ -5,6 +5,7 @@ import type {
   HabitLogRepository,
 } from '../../src/domain/ports/checkInRepositories';
 import { defaultConsents, type ConsentSet } from '../../src/domain/entities/consent';
+import type { BackupRepository } from '../../src/domain/ports/backupRepository';
 import type { ConsentRepository } from '../../src/domain/ports/consentRepository';
 import type { BodyMeasurements } from '../../src/domain/entities/bodyMeasurements';
 import type { Habit, HabitTemplateId } from '../../src/domain/entities/habit';
@@ -156,6 +157,25 @@ export class InMemoryHabitLogRepository extends FakeStore implements HabitLogRep
   replaceForDay(day: DayKey, logs: readonly HabitLog[]): Promise<Result<void, DomainError>> {
     return this.attempt(() => {
       this.logs = [...this.logs.filter((log) => log.day !== day), ...logs];
+    });
+  }
+}
+
+export class InMemoryBackupRepository extends FakeStore implements BackupRepository {
+  snapshot = '{"app":"riselyo"}';
+  restored: string | null = null;
+  refusal: string | null = null;
+
+  exportSnapshot(exportedAt: Date): Promise<Result<string, DomainError>> {
+    return this.attempt(() => `${this.snapshot}@${exportedAt.toISOString()}`);
+  }
+
+  restoreSnapshot(content: string): Promise<Result<void, DomainError>> {
+    if (this.refusal !== null) {
+      return Promise.resolve(err(domainError('invalid_input', this.refusal)));
+    }
+    return this.attempt(() => {
+      this.restored = content;
     });
   }
 }
