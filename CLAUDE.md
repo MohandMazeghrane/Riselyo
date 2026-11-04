@@ -11,7 +11,7 @@
 
 | Phase | Statut | Avancement | Critère de passage |
 | --- | --- | --- | --- |
-| 1 — Socle et suivi de base | 🚧 En cours | 14 / 16 | 7 jours d'usage réel sans bug bloquant |
+| 1 — Socle et suivi de base | 🚧 En cours | 15 / 16 | 7 jours d'usage réel sans bug bloquant |
 | 2 — Coach IA et Apple Santé | 🔒 Bloquée | 0 / 13 | Coach jugé utile, coût réel < 1 € sur 2 semaines, import Santé fiable 7 jours |
 | 3 — Moteur et bilans | 🔒 Bloquée | 0 / 8 | 3 bilans hebdo d'affilée sans chiffre faux |
 | 4 — Finitions | 🔒 Bloquée | 0 / 9 | Lighthouse PWA ≥ 90, audit sécurité et RGPD (sections 11 et 12) validé |
@@ -22,8 +22,8 @@ Le détail des tâches (cases à cocher) est en **section 16**. Les compteurs ci
 ### En ce moment
 
 - **Phase en cours** : 1
-- **Tâche en cours** : — (1.1 à 1.14 terminées)
-- **Prochaine tâche** : 1.15 — Purge automatique au lancement selon les durées de conservation (section 12) ; aujourd'hui aucune donnée n'a de durée limitée (journal, conversations, `aiUsage` n'existent pas encore) : à cadrer avant de coder
+- **Tâche en cours** : — (1.1 à 1.15 terminées)
+- **Prochaine tâche** : 1.16 — Déploiement Cloudflare Pages + tutoriel d'installation iPhone ; il faudra un compte Cloudflare (gratuit) et décider du domaine (`*.pages.dev` ou riselyo.com) : à cadrer avec l'utilisateur avant d'agir
 - **Bloquants / questions ouvertes** :
   - L'installation sur iPhone ne sera testable qu'après le déploiement (1.16) : il faut une URL en HTTPS.
   - « Maquette v1 » citée par le cahier des charges absente du dépôt : l'écran Aujourd'hui (1.10) a été fait sans elle ; à ajouter dans `docs/` si disponible pour un ajustement visuel.
@@ -42,6 +42,7 @@ _Format : `- [date] description — impact — piste de correction`._
 - [2026-11-04] Repositories créés au fil des tâches (choix validé) : consentements, profil, roue de vie, mesures (écriture seule), habitudes (liste, remplacement à l'onboarding, enregistrement par modèle), journées (avec compteurs rapides) et logs d'habitudes (par jour, depuis une date, par habitude). À ajouter : réglages (1.15)…
 - [2026-11-04] Export en clair (JSON et CSV) : avertissement affiché, chiffrement par phrase de passe prévu en 4.5 ; le fichier exporté est le format stocké (pas les entités du domaine) — toute nouvelle table ou tout nouveau champ doit être ajouté aux schémas de `infrastructure/db/backup/recordSchemas.ts`, sinon l'import le refusera (les tables vides non décrites doivent rester vides).
 - [2026-11-04] L'écran « Mes données » et `docs/rgpd.md` décrivent l'état d'aujourd'hui (« Rien aujourd'hui » pour le serveur et OpenAI) — **chaque tâche qui envoie une donnée hors du téléphone (2.2, 2.11, 4.2…) doit mettre à jour ces textes et le registre**, sinon l'information devient fausse.
+- [2026-11-04] Purge : la durée des conversations (90 jours) est une constante, le cahier la veut « réglable » — à brancher sur la table `settings` avec les réglages ; les futures tables `journal`, `conversations` et `aiUsage` doivent stocker `expiresAt` / `startedAt` en ISO UTC (`toISOString()`) et `date` en YYYY-MM-DD, sinon la purge comparera mal (documenté dans `dexieExpiredDataPurger.ts`).
 - [2026-11-04] « Tout supprimer » n'efface que le téléphone : dès que le Worker existe (2.13), il devra aussi appeler `/privacy/erase` (purge KV, désabonnement push) et rappeler de supprimer le Raccourci et de faire tourner les secrets (section 12).
 - [2026-11-04] Après « Tout supprimer », la page reste ouverte sans service worker jusqu'au prochain chargement (il se réinstalle alors, vérifié) — si l'app est fermée hors ligne juste après, elle ne s'ouvrira qu'avec du réseau.
 - [2026-11-04] Après un refus d'import, la carte de confirmation reste affichée sous le message — mineur, à revoir si cela gêne.
@@ -77,6 +78,7 @@ _Format : `- [date] description — impact — piste de correction`._
 | 2026-11-04 | 1.5 : schéma Dexie v1 (17 tables, v1 figée par un test), harnais de migration (`upToVersion`), entité `Consent` (refus par défaut, `aiJournal` dépend de `ai`), `DexieConsentRepository` | 64 tests, couverture domaine + application 100 % | `29528b0`, `bea2426`, `9960e10` | Rien (pas encore d'écran qui écrit en base) |
 | 2026-11-04 | Cahier des charges ajouté (`docs/`) ; couleur alignée sur #2563B8 ; 1.6 : onboarding partie A (A0 à A5) — domaine en TDD, 8 cas d'usage, schéma v2 (`lifeWheels`) + migration testée, 4 repositories, React Router 7, écrans + page « Besoin d'aide » ; règle ESLint « présentation → domaine : types seulement » | 175 tests, couverture domaine + application 99,5 % ; parcours complet vérifié dans le navigateur à 375 et 320 px, reprise après rechargement, données relues dans IndexedDB | `bb04e2d` … `160c19a` | Après le déploiement (1.16) : faire l'onboarding complet, quitter l'app en cours de route et vérifier la reprise, tester les liens 3114 / 15 / 112 |
 | 2026-11-04 | 1.7 : écran A6 (7e étape de l'onboarding, tout désactivé par défaut, journal verrouillé sans IA), Profil minimal, Profil → Confidentialité (enregistrement immédiat, date affichée, révocation en cascade) ; conteneur construit par `createUseCases` | 201 tests ; vérifié dans le navigateur à 375 et 320 px (utilisateur existant renvoyé sur A6, dates, révocation) | `4c63023`, `8dcc81b` | Après le déploiement (1.16) : valider l'écran A6, puis changer un choix dans Profil → Confidentialité et vérifier la date |
+| 2026-11-04 | 1.15 : purge automatique à chaque lancement (journal à expiration, conversations 90 jours avec leurs messages, consommation IA 12 mois au même jour du mois) en une transaction, silencieuse et jamais bloquante ; `monthsBefore` dans le domaine ; registre RGPD à jour | 452 tests ; vérifié dans le navigateur : au lancement, entrées expirées supprimées, entrées encore valides et journées conservées | `8e6b6d2`, `5c24c0f` | Rien de visible tant que le journal, le coach et la consommation IA n'existent pas |
 | 2026-11-04 | 1.14 : section « Ce que Riselyo garde » dans Mes données (comptes réels par sorte de donnée, trois lieux décrits tels qu'aujourd'hui, aucune publicité ni traqueur) ; `docs/rgpd.md` (registre : données en service et prévues, lieux, durées, bases, sous-traitants, droits) ; `docs/securite.md` (mesures, inventaire et rotation des secrets, incidents, contrôles) | 437 tests ; vérifié dans le navigateur à 320 px (comptes conformes à la base, pas de défilement horizontal) | `c12beb7` … `e1c3677` | Après le déploiement (1.16) : relire l'écran Mes données et vérifier que les nombres correspondent à ton usage |
 | 2026-11-04 | 1.13 : « Tout supprimer » (partie locale) dans Profil → Mes données : toutes les tables vidées en une transaction, puis caches supprimés et service worker désinscrit ; confirmation forte (écrire SUPPRIMER), rappel d'exporter ; retour à l'accueil de l'onboarding ; variante de bouton « danger » | 430 tests ; vérifié sur le build de production : 7 tables remplies → 0 ligne, 0 cache, 0 service worker, écran de bienvenue ; après rechargement le service worker se réinstalle et remet l'app en cache | `4f7890d` | Après le déploiement (1.16) : **après avoir exporté une sauvegarde**, tout supprimer, vérifier le retour à l'accueil, puis restaurer la sauvegarde |
 | 2026-11-04 | 1.12 : Zod ajouté ; Profil → Mes données : sauvegarde complète JSON (toutes les tables, versions du format et du schéma), CSV des journées (en-têtes FR, « ; », BOM, cellules neutralisées contre l'injection de formules), restauration après confirmation qui remplace tout en une transaction, refus expliqués (pas du JSON, pas une sauvegarde, version plus récente, données invalides, trop gros) sans rien changer ; Zod chargé seulement à la restauration | 418 tests ; vérifié dans le navigateur sur la vraie base (export, refus d'un fichier modifié, restauration qui ramène les 5 journées effacées) et restauration hors ligne sur le build, serveur coupé | `d23fd9d` … `2308d35` | Après le déploiement (1.16) : exporter la sauvegarde et le CSV sur l'iPhone (fichiers enregistrés dans « Fichiers »), ouvrir le CSV dans Numbers, puis restaurer la sauvegarde |
@@ -606,7 +608,7 @@ Chaque phase se termine par une app **utilisable et déployée**. Cocher les cas
 - [x] 1.12 Export JSON / CSV et import validé par Zod
 - [x] 1.13 « Tout supprimer » (partie locale)
 - [x] 1.14 Écran « Mes données » + `docs/rgpd.md` + `docs/securite.md`
-- [ ] 1.15 Purge automatique selon les durées de conservation
+- [x] 1.15 Purge automatique selon les durées de conservation
 - [ ] 1.16 Déploiement Cloudflare Pages + tutoriel d'installation iPhone
 
 ### Phase 2 — Coach IA et Apple Santé (semaines 3-4)
@@ -739,6 +741,8 @@ Une tâche n'est terminée que si :
 | 2026-11-04 | Barre des 5 onglets dès la 1.10 ; Coach, Progrès et Bilans ouvrent une page « Bientôt disponible » qui dit ce qu'ils contiendront | Choix de l'utilisateur : navigation définitive tout de suite, jamais de page vide |
 | 2026-11-04 | L'accueil n'affiche que des données réelles : pas d'anneau du score, de niveau, de série ni de focus avant les tâches qui les calculent ; pas de bouton « Jour difficile » avant la 2.9 | Choix de l'utilisateur ; l'app n'invente jamais un chiffre et aucun bouton ne mène à une page vide |
 | 2026-11-04 | Garde de l'onboarding déplacée dans `TabLayout` (route parente des 5 onglets) ; la barre n'est pas affichée sur l'onboarding, les check-ins et les sous-pages | Un seul endroit pour la règle ; les écrans ponctuels gardent toute la hauteur |
+| 2026-11-04 | Purge préparée dès la 1.15 pour le journal, les conversations et `aiUsage`, même si ces données n'existent pas encore | Choix de l'utilisateur : chaque fonction future n'aura qu'à respecter le format des dates indexées |
+| 2026-11-04 | « 12 mois » = même jour du mois un an avant (dernier jour du mois s'il est plus court) ; « 90 jours » = 90 × 24 h avant maintenant ; journal = date d'expiration enregistrée avec l'entrée | Règles simples, testées aux bornes |
 | 2026-11-04 | Transparence par des comptes réels (port `StoredDataInventory`, 7 sortes de données) plutôt qu'un texte fixe ; les textes ne décrivent que ce qui existe aujourd'hui | L'utilisateur voit ce qui est vraiment gardé ; jamais d'information fausse ou anticipée |
 | 2026-11-04 | « Tout supprimer » : vider les tables (pas supprimer la base, qui pourrait être bloquée par une connexion ouverte), puis supprimer les caches **et** désinscrire le service worker | Supprimer les caches seuls casserait le hors-ligne jusqu'à la prochaine mise à jour ; désinscrit, le service worker se réinstalle au prochain lancement |
 | 2026-11-04 | Confirmation forte par saisie du mot SUPPRIMER (casse et espaces ignorés) | Action irréversible ; un simple double appui serait trop facile à faire par erreur |

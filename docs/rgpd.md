@@ -1,6 +1,6 @@
 # Riselyo — Registre des traitements (RGPD)
 
-> Tenu à jour à chaque nouvelle donnée (`CLAUDE.md`, section 12). Dernière mise à jour : **2026-11-04** (tâche 1.14).
+> Tenu à jour à chaque nouvelle donnée (`CLAUDE.md`, section 12). Dernière mise à jour : **2026-11-04** (tâche 1.15).
 > Riselyo est utilisée par une seule personne, pour elle-même : l'exemption domestique du RGPD s'applique en principe. Comme l'app traite des **données de santé** (article 9) et fera transiter certaines données par des prestataires américains, les principes du RGPD sont appliqués comme pour une app publique.
 
 ## Responsable et personne concernée
@@ -55,14 +55,14 @@ Jamais collecté : calories, poids envoyé à l'IA, cycle, ECG, localisation, no
 
 ## Droits de la personne
 
-| Droit                   | Mise en œuvre                                                                   | État                              |
-| ----------------------- | ------------------------------------------------------------------------------- | --------------------------------- |
-| Information             | Écran « Mes données » (ce qui est gardé, où, combien de temps)                  | En service (1.14)                 |
-| Accès et portabilité    | Export JSON complet et CSV des journées                                         | En service (1.12)                 |
-| Rectification           | Refaire un check-in, changer un palier, modifier ses réponses                   | En service                        |
-| Effacement              | « Tout supprimer » (téléphone) ; partie serveur `/privacy/erase`                | Téléphone : 1.13 ; serveur : 2.13 |
-| Retrait du consentement | Profil → Confidentialité, un interrupteur par traitement, révocation en cascade | En service (1.7)                  |
-| Limitation des durées   | Purge automatique au lancement                                                  | 1.15                              |
+| Droit                   | Mise en œuvre                                                                                                                                                                                                     | État                                                            |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Information             | Écran « Mes données » (ce qui est gardé, où, combien de temps)                                                                                                                                                    | En service (1.14)                                               |
+| Accès et portabilité    | Export JSON complet et CSV des journées                                                                                                                                                                           | En service (1.12)                                               |
+| Rectification           | Refaire un check-in, changer un palier, modifier ses réponses                                                                                                                                                     | En service                                                      |
+| Effacement              | « Tout supprimer » (téléphone) ; partie serveur `/privacy/erase`                                                                                                                                                  | Téléphone : 1.13 ; serveur : 2.13                               |
+| Retrait du consentement | Profil → Confidentialité, un interrupteur par traitement, révocation en cascade                                                                                                                                   | En service (1.7)                                                |
+| Limitation des durées   | Purge automatique à chaque lancement : journal à son expiration (24 h), conversations après 90 jours (avec leurs messages), consommation IA après 12 mois ; les autres données restent jusqu'à « Tout supprimer » | En service (1.15) ; s'appliquera dès que ces données existeront |
 
 ## Mesures de protection
 
