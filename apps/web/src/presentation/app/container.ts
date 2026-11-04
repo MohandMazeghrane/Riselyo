@@ -7,6 +7,7 @@ import { DexieDayEntryRepository } from '../../infrastructure/db/repositories/de
 import { DexieHabitLogRepository } from '../../infrastructure/db/repositories/dexieHabitLogRepository';
 import { DexieHabitRepository } from '../../infrastructure/db/repositories/dexieHabitRepository';
 import { DexieLifeWheelRepository } from '../../infrastructure/db/repositories/dexieLifeWheelRepository';
+import { DexieStoredDataInventory } from '../../infrastructure/db/repositories/dexieStoredDataInventory';
 import { DexieProfileRepository } from '../../infrastructure/db/repositories/dexieProfileRepository';
 import { BrowserLocalDataEraser } from '../../infrastructure/privacy/browserLocalDataEraser';
 import { createUseCases, type AppContainer } from './useCases';
@@ -24,6 +25,7 @@ export function createContainer(): AppContainer {
     dayEntries: new DexieDayEntryRepository(db),
     habitLogs: new DexieHabitLogRepository(db),
     backup: new DexieBackupRepository(db),
+    inventory: new DexieStoredDataInventory(db),
     eraser: new BrowserLocalDataEraser(db, {
       caches: 'caches' in globalThis ? globalThis.caches : undefined,
       serviceWorker: 'serviceWorker' in navigator ? navigator.serviceWorker : undefined,

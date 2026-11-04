@@ -8,6 +8,10 @@ import { defaultConsents, type ConsentSet } from '../../src/domain/entities/cons
 import type { BackupRepository } from '../../src/domain/ports/backupRepository';
 import type { ConsentRepository } from '../../src/domain/ports/consentRepository';
 import type { LocalDataEraser } from '../../src/domain/ports/localDataEraser';
+import type {
+  StoredDataCounts,
+  StoredDataInventory,
+} from '../../src/domain/ports/storedDataInventory';
 import type { BodyMeasurements } from '../../src/domain/entities/bodyMeasurements';
 import type { Habit, HabitTemplateId } from '../../src/domain/entities/habit';
 import type { LifeWheel } from '../../src/domain/entities/lifeWheel';
@@ -199,5 +203,21 @@ export class InMemoryLocalDataEraser implements LocalDataEraser {
     }
     this.calls.push(part);
     return Promise.resolve(ok(undefined));
+  }
+}
+
+export class InMemoryStoredDataInventory extends FakeStore implements StoredDataInventory {
+  counts: StoredDataCounts = {
+    profile: 0,
+    consents: 0,
+    days: 0,
+    habits: 0,
+    habitLogs: 0,
+    measurements: 0,
+    lifeWheels: 0,
+  };
+
+  count(): Promise<Result<StoredDataCounts, DomainError>> {
+    return this.attempt(() => this.counts);
   }
 }

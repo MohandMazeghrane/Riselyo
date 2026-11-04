@@ -5,6 +5,7 @@ import type {
 import type { BackupRepository } from '../../domain/ports/backupRepository';
 import type { Clock } from '../../domain/ports/clock';
 import type { LocalDataEraser } from '../../domain/ports/localDataEraser';
+import type { StoredDataInventory } from '../../domain/ports/storedDataInventory';
 import type { ConsentRepository } from '../../domain/ports/consentRepository';
 import type {
   BodyMeasurementsRepository,
@@ -25,4 +26,5 @@ export interface AppAdapters {
   readonly habitLogs: HabitLogRepository;
   readonly backup: BackupRepository;
   readonly eraser: LocalDataEraser;
+  readonly inventory: StoredDataInventory;
 }

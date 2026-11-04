@@ -12,6 +12,7 @@ import {
   InMemoryLifeWheelRepository,
   InMemoryLocalDataEraser,
   InMemoryProfileRepository,
+  InMemoryStoredDataInventory,
 } from './inMemoryRepositories';
 
 export interface TestApp {
@@ -26,6 +27,7 @@ export interface TestApp {
   readonly habitLogs: InMemoryHabitLogRepository;
   readonly backup: InMemoryBackupRepository;
   readonly eraser: InMemoryLocalDataEraser;
+  readonly inventory: InMemoryStoredDataInventory;
 }
 
 /** The real use cases wired to in-memory repositories, for screen tests. */
@@ -46,6 +48,7 @@ export function createTestApp(isoDay = '2026-11-04', hour = 10): TestApp {
     habitLogs: new InMemoryHabitLogRepository(),
     backup: new InMemoryBackupRepository(),
     eraser: new InMemoryLocalDataEraser(),
+    inventory: new InMemoryStoredDataInventory(),
   };
   return { container: createUseCases(adapters), ...adapters };
 }
