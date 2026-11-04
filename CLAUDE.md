@@ -11,7 +11,7 @@
 
 | Phase | Statut | Avancement | Critère de passage |
 | --- | --- | --- | --- |
-| 1 — Socle et suivi de base | 🚧 En cours | 4 / 16 | 7 jours d'usage réel sans bug bloquant |
+| 1 — Socle et suivi de base | 🚧 En cours | 5 / 16 | 7 jours d'usage réel sans bug bloquant |
 | 2 — Coach IA et Apple Santé | 🔒 Bloquée | 0 / 13 | Coach jugé utile, coût réel < 1 € sur 2 semaines, import Santé fiable 7 jours |
 | 3 — Moteur et bilans | 🔒 Bloquée | 0 / 8 | 3 bilans hebdo d'affilée sans chiffre faux |
 | 4 — Finitions | 🔒 Bloquée | 0 / 9 | Lighthouse PWA ≥ 90, audit sécurité et RGPD (sections 11 et 12) validé |
@@ -22,8 +22,8 @@ Le détail des tâches (cases à cocher) est en **section 16**. Les compteurs ci
 ### En ce moment
 
 - **Phase en cours** : 1
-- **Tâche en cours** : — (1.1 à 1.4 terminées)
-- **Prochaine tâche** : 1.5 — Schéma Dexie v1 + repositories + tests de migration
+- **Tâche en cours** : — (1.1 à 1.5 terminées)
+- **Prochaine tâche** : 1.6 — Onboarding partie A (formulaire, roue de vie, horaires) — sans IA ; elle ajoutera l'entité Profile et son repository
 - **Bloquants / questions ouvertes** :
   - L'installation sur iPhone ne sera testable qu'après le déploiement (1.16) : il faut une URL en HTTPS.
 
@@ -38,6 +38,8 @@ _Format : `- [date] description — impact — piste de correction`._
 - [2026-11-04] `npm audit` : 8 alertes modérées et 2 faibles dans `workbox-build` (glob, minimatch, deepmerge), utilisé seulement au build, rien dans le bundle — la CI n'échoue qu'au niveau haut — surveiller les mises à jour de `vite-plugin-pwa` via Dependabot.
 - [2026-11-04] Thème sombre : tokens et variante `dark` prêts, mais aucune bascule encore — prévu en 4.7.
 - [2026-11-04] secretlint ne reconnaît que les secrets à format connu (OpenAI, Cloudflare, GitHub, clés privées…) : `ACCESS_CODE` et `HEALTH_TOKEN` (chaînes aléatoires) ne seraient pas détectés — ne jamais les écrire hors de `.dev.vars` (ignoré par git) et `wrangler secret` — envisager une règle `secretlint-rule-pattern` en 2.1.
+- [2026-11-04] Repositories créés au fil des tâches (choix validé) : seul `consents` en a un. À ajouter : profil (1.6), journées (1.8), habitudes et logs (1.9), réglages (1.15, durée de conservation du coach)… — chaque tâche définit son entité en TDD puis son repository.
+- [2026-11-04] La base Dexie n'est pas encore instanciée dans `container.ts` : aucun cas d'usage ne l'utilise — la brancher en 1.6/1.7 avec le premier cas d'usage qui lit ou écrit.
 - [2026-11-04] CSP `connect-src 'self'` — l'origine du Worker devra y être ajoutée en 2.1 (le test `securityHeaders.test.ts` le rappellera).
 
 ### Journal des sessions
@@ -48,6 +50,7 @@ _Format : `- [date] description — impact — piste de correction`._
 | 2026-11-04 | 1.3 PWA installable : Vite 8, React 18, Tailwind 4, manifest FR, icônes, service worker (hors ligne vérifié serveur coupé), Inter auto-hébergée (latin), écran d'accueil | 35 tests (dont 3 de présentation) ; vérifié à 375 et 320 px | `17b48c5`, `970a0ae`, `9766186` | Après le déploiement (1.16) : ajout à l'écran d'accueil, icône, ouverture en mode avion |
 | 2026-11-04 | Dépôt GitHub branché (`MohandMazeghrane/Riselyo`, public) ; CI verte sur `main` ; Dependabot actif avec exclusions (TS, `@types/node`, React majeurs) | CI GitHub Actions ✅ | `2af6cf0`, `7aec2e8` | Rien |
 | 2026-11-04 | PR Dependabot traitées (#1 fusionnée, #2 appliquée sur `main`, #3 #4 #6 fermées) ; 1.4 : secretlint en pré-commit et dans `npm run check` (blocage vérifié avec un faux jeton), `_headers` (CSP stricte, HSTS…) testé et appliqué en preview, aucune violation CSP | 44 tests | `ec80300`, `95fa7f7`, `7b790f7` | Rien (les en-têtes seront actifs après le déploiement 1.16) |
+| 2026-11-04 | 1.5 : schéma Dexie v1 (17 tables, v1 figée par un test), harnais de migration (`upToVersion`), entité `Consent` (refus par défaut, `aiJournal` dépend de `ai`), `DexieConsentRepository` | 64 tests, couverture domaine + application 100 % | `29528b0`, `bea2426`, `9960e10` | Rien (pas encore d'écran qui écrit en base) |
 
 ---
 
@@ -559,7 +562,7 @@ Chaque phase se termine par une app **utilisable et déployée**. Cocher les cas
 - [x] 1.2 Squelette Clean Architecture : couches, ports, `container.ts`, `Result`, `Clock`
 - [x] 1.3 PWA installable (manifest, icônes, service worker, hors ligne), polices auto-hébergées
 - [x] 1.4 En-têtes de sécurité (`_headers`, CSP) et scan de secrets en pré-commit
-- [ ] 1.5 Schéma Dexie v1 + repositories + tests de migration
+- [x] 1.5 Schéma Dexie v1 + repositories + tests de migration
 - [ ] 1.6 Onboarding partie A (formulaire, roue de vie, horaires) — sans IA
 - [ ] 1.7 Écran de consentements + Profil → Confidentialité
 - [ ] 1.8 Check-ins matin et soir en boutons
@@ -673,6 +676,11 @@ Une tâche n'est terminée que si :
 | 2026-11-04 | Dépôt GitHub `MohandMazeghrane/Riselyo` (public) ; CI au push sur `main` et sur les PR | Choix de l'utilisateur ; aucun secret ni donnée perso dans le dépôt (sections 11 et 12) |
 | 2026-11-04 | secretlint (+ preset recommandé) et `simple-git-hooks` pour le pré-commit, plutôt que gitleaks | Installés par `npm install`, aucun binaire à installer à part, fonctionne sous Windows ; scan aussi dans `npm run check` donc en CI |
 | 2026-11-04 | En-têtes de `public/_headers` lus par `apps/web/build/securityHeaders.ts`, appliqués au `vite preview` et testés | Même politique en local et en production ; une régression de la CSP fait échouer les tests |
+| 2026-11-04 | Dexie 4 ; `fake-indexeddb` (dev) pour les tests, injecté via les options de Dexie (pas de polyfill global) | Validé par l'utilisateur ; tests rapides, une base isolée par test |
+| 2026-11-04 | Schéma v1 complet dès maintenant, repositories au fil des tâches | Validé par l'utilisateur ; les index sont figés, les formats de données sont définis quand l'écran qui les utilise arrive |
+| 2026-11-04 | Historique `SCHEMA_VERSIONS` en ajout seul + test qui fige la v1 | Applique « ne jamais modifier une version existante » automatiquement |
+| 2026-11-04 | Consentement « journal envoyé à l'IA » subordonné au consentement « IA » (révocation en cascade) | Le journal ne peut partir vers l'IA que si l'IA est autorisée |
+| 2026-11-04 | Enregistrements relus avec une garde de type ; tout enregistrement illisible retombe sur la valeur la plus protectrice (consentement refusé) | Robustesse et vie privée par défaut, sans dépendance supplémentaire (Zod arrivera avec les frontières réseau et import) |
 | 2026-11-04 | Conteneur fourni aux écrans via un contexte React (`ContainerProvider` / `useContainer`) | Injection sans import de l'infrastructure ; les tests injectent des faux |
 
 > Ajouter une ligne à chaque décision structurante.
