@@ -1,3 +1,9 @@
+import type { DayEntry } from '../../src/domain/entities/dayEntry';
+import type { HabitLog } from '../../src/domain/entities/habitLog';
+import type {
+  DayEntryRepository,
+  HabitLogRepository,
+} from '../../src/domain/ports/checkInRepositories';
 import { defaultConsents, type ConsentSet } from '../../src/domain/entities/consent';
 import type { ConsentRepository } from '../../src/domain/ports/consentRepository';
 import type { BodyMeasurements } from '../../src/domain/entities/bodyMeasurements';
@@ -91,6 +97,34 @@ export class InMemoryConsentRepository extends FakeStore implements ConsentRepos
   save(consents: ConsentSet): Promise<Result<void, DomainError>> {
     return this.attempt(() => {
       this.consents = consents;
+    });
+  }
+}
+
+export class InMemoryDayEntryRepository extends FakeStore implements DayEntryRepository {
+  readonly entries = new Map<DayKey, DayEntry>();
+
+  findByDay(day: DayKey): Promise<Result<DayEntry | null, DomainError>> {
+    return this.attempt(() => this.entries.get(day) ?? null);
+  }
+
+  save(entry: DayEntry): Promise<Result<void, DomainError>> {
+    return this.attempt(() => {
+      this.entries.set(entry.day, entry);
+    });
+  }
+}
+
+export class InMemoryHabitLogRepository extends FakeStore implements HabitLogRepository {
+  logs: HabitLog[] = [];
+
+  listByDay(day: DayKey): Promise<Result<HabitLog[], DomainError>> {
+    return this.attempt(() => this.logs.filter((log) => log.day === day));
+  }
+
+  replaceForDay(day: DayKey, logs: readonly HabitLog[]): Promise<Result<void, DomainError>> {
+    return this.attempt(() => {
+      this.logs = [...this.logs.filter((log) => log.day !== day), ...logs];
     });
   }
 }
