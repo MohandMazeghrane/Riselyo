@@ -11,7 +11,7 @@
 
 | Phase | Statut | Avancement | Critère de passage |
 | --- | --- | --- | --- |
-| 1 — Socle et suivi de base | 🚧 En cours | 3 / 16 | 7 jours d'usage réel sans bug bloquant |
+| 1 — Socle et suivi de base | 🚧 En cours | 4 / 16 | 7 jours d'usage réel sans bug bloquant |
 | 2 — Coach IA et Apple Santé | 🔒 Bloquée | 0 / 13 | Coach jugé utile, coût réel < 1 € sur 2 semaines, import Santé fiable 7 jours |
 | 3 — Moteur et bilans | 🔒 Bloquée | 0 / 8 | 3 bilans hebdo d'affilée sans chiffre faux |
 | 4 — Finitions | 🔒 Bloquée | 0 / 9 | Lighthouse PWA ≥ 90, audit sécurité et RGPD (sections 11 et 12) validé |
@@ -22,11 +22,9 @@ Le détail des tâches (cases à cocher) est en **section 16**. Les compteurs ci
 ### En ce moment
 
 - **Phase en cours** : 1
-- **Tâche en cours** : — (1.1, 1.2 et 1.3 terminées)
-- **Prochaine tâche** : 1.4 — En-têtes de sécurité (`_headers`, CSP) et scan de secrets en pré-commit
+- **Tâche en cours** : — (1.1 à 1.4 terminées)
+- **Prochaine tâche** : 1.5 — Schéma Dexie v1 + repositories + tests de migration
 - **Bloquants / questions ouvertes** :
-  - PR Dependabot #3 (`@types/node` 26) et #4 (TypeScript 7) à fermer : versions bloquées volontairement (règles `ignore` ajoutées). #1 et #2 (actions v7) fusionnables si la CI est verte.
-  - Pour 1.4 : choisir le scanner de secrets (`secretlint` ou `gitleaks`).
   - L'installation sur iPhone ne sera testable qu'après le déploiement (1.16) : il faut une URL en HTTPS.
 
 ### Dette technique et problèmes connus
@@ -39,6 +37,8 @@ _Format : `- [date] description — impact — piste de correction`._
 - [2026-11-04] Le premier commit (`chore`) seul ne passe pas `typecheck` (`apps/web` vide) — aucun impact, corrigé par les deux commits suivants.
 - [2026-11-04] `npm audit` : 8 alertes modérées et 2 faibles dans `workbox-build` (glob, minimatch, deepmerge), utilisé seulement au build, rien dans le bundle — la CI n'échoue qu'au niveau haut — surveiller les mises à jour de `vite-plugin-pwa` via Dependabot.
 - [2026-11-04] Thème sombre : tokens et variante `dark` prêts, mais aucune bascule encore — prévu en 4.7.
+- [2026-11-04] secretlint ne reconnaît que les secrets à format connu (OpenAI, Cloudflare, GitHub, clés privées…) : `ACCESS_CODE` et `HEALTH_TOKEN` (chaînes aléatoires) ne seraient pas détectés — ne jamais les écrire hors de `.dev.vars` (ignoré par git) et `wrangler secret` — envisager une règle `secretlint-rule-pattern` en 2.1.
+- [2026-11-04] CSP `connect-src 'self'` — l'origine du Worker devra y être ajoutée en 2.1 (le test `securityHeaders.test.ts` le rappellera).
 
 ### Journal des sessions
 
@@ -47,6 +47,7 @@ _Format : `- [date] description — impact — piste de correction`._
 | 2026-11-04 | 1.1 monorepo et outillage ; 1.2 squelette Clean Architecture (`Result`, `DomainError`, `DayKey`, port `Clock`, `SystemClock`, `FakeClock`, `getCurrentDay`, `container.ts`, test des frontières) | 32 tests, couverture domaine + application 100 % | `c9cb27b`, `b4dc70c`, `498e901` | Rien (pas encore d'interface) |
 | 2026-11-04 | 1.3 PWA installable : Vite 8, React 18, Tailwind 4, manifest FR, icônes, service worker (hors ligne vérifié serveur coupé), Inter auto-hébergée (latin), écran d'accueil | 35 tests (dont 3 de présentation) ; vérifié à 375 et 320 px | `17b48c5`, `970a0ae`, `9766186` | Après le déploiement (1.16) : ajout à l'écran d'accueil, icône, ouverture en mode avion |
 | 2026-11-04 | Dépôt GitHub branché (`MohandMazeghrane/Riselyo`, public) ; CI verte sur `main` ; Dependabot actif avec exclusions (TS, `@types/node`, React majeurs) | CI GitHub Actions ✅ | `2af6cf0`, `7aec2e8` | Rien |
+| 2026-11-04 | PR Dependabot traitées (#1 fusionnée, #2 appliquée sur `main`, #3 #4 #6 fermées) ; 1.4 : secretlint en pré-commit et dans `npm run check` (blocage vérifié avec un faux jeton), `_headers` (CSP stricte, HSTS…) testé et appliqué en preview, aucune violation CSP | 44 tests | `ec80300`, `95fa7f7`, `7b790f7` | Rien (les en-têtes seront actifs après le déploiement 1.16) |
 
 ---
 
@@ -557,7 +558,7 @@ Chaque phase se termine par une app **utilisable et déployée**. Cocher les cas
 - [x] 1.1 Monorepo, TypeScript strict, ESLint (+ frontières d'architecture), Prettier, Vitest, CI GitHub Actions
 - [x] 1.2 Squelette Clean Architecture : couches, ports, `container.ts`, `Result`, `Clock`
 - [x] 1.3 PWA installable (manifest, icônes, service worker, hors ligne), polices auto-hébergées
-- [ ] 1.4 En-têtes de sécurité (`_headers`, CSP) et scan de secrets en pré-commit
+- [x] 1.4 En-têtes de sécurité (`_headers`, CSP) et scan de secrets en pré-commit
 - [ ] 1.5 Schéma Dexie v1 + repositories + tests de migration
 - [ ] 1.6 Onboarding partie A (formulaire, roue de vie, horaires) — sans IA
 - [ ] 1.7 Écran de consentements + Profil → Confidentialité
@@ -670,6 +671,8 @@ Une tâche n'est terminée que si :
 | 2026-11-04 | Vite 8, `@vitejs/plugin-react`, `vite-plugin-pwa` (Workbox `generateSW`, `autoUpdate`, enregistrement par script externe), jsdom + Testing Library | Stack prévue section 3 ; script externe compatible avec une CSP `script-src 'self'` |
 | 2026-11-04 | Icônes générées par `apps/web/scripts/generate-icons.mjs` (encodeur PNG maison avec `zlib`) | Aucune dépendance d'image ; regénérer avec `npm run icons -w apps/web` |
 | 2026-11-04 | Dépôt GitHub `MohandMazeghrane/Riselyo` (public) ; CI au push sur `main` et sur les PR | Choix de l'utilisateur ; aucun secret ni donnée perso dans le dépôt (sections 11 et 12) |
+| 2026-11-04 | secretlint (+ preset recommandé) et `simple-git-hooks` pour le pré-commit, plutôt que gitleaks | Installés par `npm install`, aucun binaire à installer à part, fonctionne sous Windows ; scan aussi dans `npm run check` donc en CI |
+| 2026-11-04 | En-têtes de `public/_headers` lus par `apps/web/build/securityHeaders.ts`, appliqués au `vite preview` et testés | Même politique en local et en production ; une régression de la CSP fait échouer les tests |
 | 2026-11-04 | Conteneur fourni aux écrans via un contexte React (`ContainerProvider` / `useContainer`) | Injection sans import de l'infrastructure ; les tests injectent des faux |
 
 > Ajouter une ligne à chaque décision structurante.
