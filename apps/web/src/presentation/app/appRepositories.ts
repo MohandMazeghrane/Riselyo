@@ -1,3 +1,7 @@
+import type {
+  DayEntryRepository,
+  HabitLogRepository,
+} from '../../domain/ports/checkInRepositories';
 import type { Clock } from '../../domain/ports/clock';
 import type { ConsentRepository } from '../../domain/ports/consentRepository';
 import type {
@@ -15,4 +19,6 @@ export interface AppAdapters {
   readonly measurements: BodyMeasurementsRepository;
   readonly habits: HabitRepository;
   readonly consents: ConsentRepository;
+  readonly dayEntries: DayEntryRepository;
+  readonly habitLogs: HabitLogRepository;
 }

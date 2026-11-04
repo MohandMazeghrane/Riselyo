@@ -5,6 +5,8 @@ import { FakeClock } from './fakeClock';
 import {
   InMemoryBodyMeasurementsRepository,
   InMemoryConsentRepository,
+  InMemoryDayEntryRepository,
+  InMemoryHabitLogRepository,
   InMemoryHabitRepository,
   InMemoryLifeWheelRepository,
   InMemoryProfileRepository,
@@ -18,6 +20,8 @@ export interface TestApp {
   readonly measurements: InMemoryBodyMeasurementsRepository;
   readonly habits: InMemoryHabitRepository;
   readonly consents: InMemoryConsentRepository;
+  readonly dayEntries: InMemoryDayEntryRepository;
+  readonly habitLogs: InMemoryHabitLogRepository;
 }
 
 /** The real use cases wired to in-memory repositories, for screen tests. */
@@ -34,6 +38,8 @@ export function createTestApp(isoDay = '2026-11-04', hour = 10): TestApp {
     measurements: new InMemoryBodyMeasurementsRepository(),
     habits: new InMemoryHabitRepository(),
     consents: new InMemoryConsentRepository(),
+    dayEntries: new InMemoryDayEntryRepository(),
+    habitLogs: new InMemoryHabitLogRepository(),
   };
   return { container: createUseCases(adapters), ...adapters };
 }

@@ -31,6 +31,15 @@ import {
 import { createSubmitWhy, type SubmitWhy } from '../../application/onboarding/submitWhy';
 import { createGetConsents, type GetConsents } from '../../application/privacy/getConsents';
 import { createUpdateConsent, type UpdateConsent } from '../../application/privacy/updateConsent';
+import { createGetCheckInDay, type GetCheckInDay } from '../../application/checkin/getCheckInDay';
+import {
+  createSubmitEveningCheckIn,
+  type SubmitEveningCheckIn,
+} from '../../application/checkin/submitEveningCheckIn';
+import {
+  createSubmitMorningCheckIn,
+  type SubmitMorningCheckIn,
+} from '../../application/checkin/submitMorningCheckIn';
 import type { AppAdapters } from './appRepositories';
 
 export interface OnboardingUseCases {
@@ -50,11 +59,18 @@ export interface PrivacyUseCases {
   readonly updateConsent: UpdateConsent;
 }
 
+export interface CheckInUseCases {
+  readonly getDay: GetCheckInDay;
+  readonly submitMorning: SubmitMorningCheckIn;
+  readonly submitEvening: SubmitEveningCheckIn;
+}
+
 /** Use cases exposed to the UI. */
 export interface AppContainer {
   readonly getCurrentDay: GetCurrentDay;
   readonly onboarding: OnboardingUseCases;
   readonly privacy: PrivacyUseCases;
+  readonly checkIn: CheckInUseCases;
 }
 
 /** Wires the use cases to whatever adapters are given (Dexie in the app, fakes in tests). */
@@ -66,6 +82,11 @@ export function createUseCases(adapters: AppAdapters): AppContainer {
     privacy: {
       getConsents: createGetConsents({ consents }),
       updateConsent: createUpdateConsent({ consents, clock }),
+    },
+    checkIn: {
+      getDay: createGetCheckInDay(adapters),
+      submitMorning: createSubmitMorningCheckIn(adapters),
+      submitEvening: createSubmitEveningCheckIn(adapters),
     },
   };
 }
