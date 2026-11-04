@@ -13,7 +13,8 @@ export function WeekdayPicker({ selected, onToggle }: WeekdayPickerProps): React
   return (
     <fieldset>
       <legend className="mb-2 font-medium">{fr.rhythm.sportDays}</legend>
-      <div className="grid grid-cols-7 gap-1">
+      {/* One row from 375 px; wraps on narrower screens so that each target keeps 44 px. */}
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(2.75rem,1fr))] gap-1">
         {ONBOARDING_FORM.weekdays.map((day) => (
           <button
             key={day}
