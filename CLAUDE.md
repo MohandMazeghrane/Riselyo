@@ -25,7 +25,7 @@ Le détail des tâches (cases à cocher) est en **section 16**. Les compteurs ci
 - **Tâche en cours** : — (1.1, 1.2 et 1.3 terminées)
 - **Prochaine tâche** : 1.4 — En-têtes de sécurité (`_headers`, CSP) et scan de secrets en pré-commit
 - **Bloquants / questions ouvertes** :
-  - Créer le dépôt GitHub distant et y pousser `main` pour activer la CI et Dependabot.
+  - PR Dependabot #3 (`@types/node` 26) et #4 (TypeScript 7) à fermer : versions bloquées volontairement (règles `ignore` ajoutées). #1 et #2 (actions v7) fusionnables si la CI est verte.
   - Pour 1.4 : choisir le scanner de secrets (`secretlint` ou `gitleaks`).
   - L'installation sur iPhone ne sera testable qu'après le déploiement (1.16) : il faut une URL en HTTPS.
 
@@ -46,6 +46,7 @@ _Format : `- [date] description — impact — piste de correction`._
 | --- | --- | --- | --- | --- |
 | 2026-11-04 | 1.1 monorepo et outillage ; 1.2 squelette Clean Architecture (`Result`, `DomainError`, `DayKey`, port `Clock`, `SystemClock`, `FakeClock`, `getCurrentDay`, `container.ts`, test des frontières) | 32 tests, couverture domaine + application 100 % | `c9cb27b`, `b4dc70c`, `498e901` | Rien (pas encore d'interface) |
 | 2026-11-04 | 1.3 PWA installable : Vite 8, React 18, Tailwind 4, manifest FR, icônes, service worker (hors ligne vérifié serveur coupé), Inter auto-hébergée (latin), écran d'accueil | 35 tests (dont 3 de présentation) ; vérifié à 375 et 320 px | `17b48c5`, `970a0ae`, `9766186` | Après le déploiement (1.16) : ajout à l'écran d'accueil, icône, ouverture en mode avion |
+| 2026-11-04 | Dépôt GitHub branché (`MohandMazeghrane/Riselyo`, public) ; CI verte sur `main` ; Dependabot actif avec exclusions (TS, `@types/node`, React majeurs) | CI GitHub Actions ✅ | `2af6cf0`, `7aec2e8` | Rien |
 
 ---
 
@@ -668,6 +669,7 @@ Une tâche n'est terminée que si :
 | 2026-11-04 | Tailwind 4 (tokens dans `@theme`) au lieu de Tailwind 3 (`tailwind.config.ts`) | Choix de l'utilisateur : version maintenue ; section 3 mise à jour |
 | 2026-11-04 | Vite 8, `@vitejs/plugin-react`, `vite-plugin-pwa` (Workbox `generateSW`, `autoUpdate`, enregistrement par script externe), jsdom + Testing Library | Stack prévue section 3 ; script externe compatible avec une CSP `script-src 'self'` |
 | 2026-11-04 | Icônes générées par `apps/web/scripts/generate-icons.mjs` (encodeur PNG maison avec `zlib`) | Aucune dépendance d'image ; regénérer avec `npm run icons -w apps/web` |
+| 2026-11-04 | Dépôt GitHub `MohandMazeghrane/Riselyo` (public) ; CI au push sur `main` et sur les PR | Choix de l'utilisateur ; aucun secret ni donnée perso dans le dépôt (sections 11 et 12) |
 | 2026-11-04 | Conteneur fourni aux écrans via un contexte React (`ContainerProvider` / `useContainer`) | Injection sans import de l'infrastructure ; les tests injectent des faux |
 
 > Ajouter une ligne à chaque décision structurante.
