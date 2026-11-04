@@ -1,5 +1,5 @@
 import Dexie, { type DexieOptions, type Transaction } from 'dexie';
-import { SCHEMA_V1 } from './schema';
+import { SCHEMA_V1, SCHEMA_V2 } from './schema';
 
 export const DATABASE_NAME = 'riselyo';
 
@@ -10,7 +10,10 @@ export interface SchemaVersion {
 }
 
 /** Ordered history of the schema. Append only: never edit or remove a published entry. */
-export const SCHEMA_VERSIONS: readonly SchemaVersion[] = [{ version: 1, stores: SCHEMA_V1 }];
+export const SCHEMA_VERSIONS: readonly SchemaVersion[] = [
+  { version: 1, stores: SCHEMA_V1 },
+  { version: 2, stores: SCHEMA_V2 },
+];
 
 export interface OpenDatabaseOptions {
   readonly name?: string;

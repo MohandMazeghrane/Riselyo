@@ -21,3 +21,8 @@ export const SCHEMA_V1 = {
   aiUsage: '++id, date, task',
   settings: '&key',
 } as const satisfies Readonly<Record<string, string>>;
+
+/** v2 (task 1.6): dated life wheels, one per day (day 0, then every 30 days). */
+export const SCHEMA_V2 = {
+  lifeWheels: '&day',
+} as const satisfies Readonly<Record<string, string>>;

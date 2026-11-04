@@ -1,23 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { FakeClock } from '../../../test/fakes/fakeClock';
-import { createGetCurrentDay } from '../../application/day/getCurrentDay';
-import { parseDayKey } from '../../domain/shared/dayKey';
+import { createTestApp } from '../../../test/fakes/testContainer';
 import { App } from './App';
 import { ContainerProvider } from './ContainerContext';
 
 function renderAppOn(isoDay: string, hour: number): void {
-  const date = parseDayKey(isoDay);
-  if (!date.ok) {
-    throw new Error(`invalid test fixture ${isoDay}`);
-  }
-  const clock = new FakeClock(new Date(`${isoDay}T12:00:00Z`), {
-    date: date.value,
-    hour,
-    minute: 0,
-  });
   render(
-    <ContainerProvider container={{ getCurrentDay: createGetCurrentDay({ clock }) }}>
+    <ContainerProvider container={createTestApp(isoDay, hour).container}>
       <App />
     </ContainerProvider>,
   );

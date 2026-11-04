@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { memoryIndexedDb } from '../../../test/fakes/memoryIndexedDb';
 import { createRiselyoDatabase, SCHEMA_VERSIONS } from './database';
-import { SCHEMA_V1 } from './schema';
+import { SCHEMA_V1, SCHEMA_V2 } from './schema';
 
 /** Copy of version 1 as published. If this test fails, add a new version instead. */
 const PUBLISHED_V1 = {
@@ -24,10 +24,20 @@ const PUBLISHED_V1 = {
   settings: '&key',
 };
 
+/** Copy of version 2 as published (task 1.6). */
+const PUBLISHED_V2 = { lifeWheels: '&day' };
+
+const LATEST_VERSION = 2;
+
 describe('schema history', () => {
   it('keeps version 1 exactly as published', () => {
     expect(SCHEMA_V1).toEqual(PUBLISHED_V1);
     expect(SCHEMA_VERSIONS[0]).toEqual({ version: 1, stores: PUBLISHED_V1 });
+  });
+
+  it('keeps version 2 exactly as published', () => {
+    expect(SCHEMA_V2).toEqual(PUBLISHED_V2);
+    expect(SCHEMA_VERSIONS[1]).toEqual({ version: 2, stores: PUBLISHED_V2 });
   });
 
   it('lists versions in strictly increasing order starting at 1', () => {
@@ -40,14 +50,14 @@ describe('schema history', () => {
 });
 
 describe('createRiselyoDatabase', () => {
-  it('creates every store of version 1 on a fresh install', async () => {
+  it('creates every store of the latest version on a fresh install', async () => {
     const db = createRiselyoDatabase(memoryIndexedDb());
     await db.open();
 
     const stores = db.tables.map((table) => table.name).sort();
 
-    expect(stores).toEqual(Object.keys(PUBLISHED_V1).sort());
-    expect(db.verno).toBe(1);
+    expect(stores).toEqual(Object.keys({ ...PUBLISHED_V1, ...PUBLISHED_V2 }).sort());
+    expect(db.verno).toBe(LATEST_VERSION);
     db.close();
   });
 
@@ -79,5 +89,22 @@ describe('createRiselyoDatabase', () => {
 
     expect(db.verno).toBe(1);
     db.close();
+  });
+});
+
+describe('migration v1 → v2', () => {
+  it('keeps existing data and adds the life wheels store', async () => {
+    const storage = memoryIndexedDb();
+    const v1 = createRiselyoDatabase({ ...storage, upToVersion: 1 });
+    await v1.table('consents').put({ key: 'health', granted: true, decidedAt: null });
+    v1.close();
+
+    const v2 = createRiselyoDatabase(storage);
+    await v2.open();
+
+    expect(v2.verno).toBe(2);
+    expect(await v2.table('consents').get('health')).toMatchObject({ granted: true });
+    expect(v2.table('lifeWheels').schema.primKey.name).toBe('day');
+    v2.close();
   });
 });
