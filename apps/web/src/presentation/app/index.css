@@ -1,0 +1,29 @@
+@import 'tailwindcss';
+@import './fonts.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand-50: #eff6ff;
+  --color-brand-100: #dbeafe;
+  --color-brand-500: #3b82f6;
+  --color-brand-600: #2563eb;
+  --color-brand-700: #1d4ed8;
+
+  /* Reserved for "à éviter" findings only. */
+  --color-avoid-500: #f97316;
+
+  --color-surface: #f8fafc;
+  --color-surface-dark: #0f172a;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  @apply bg-surface text-slate-900 antialiased dark:bg-surface-dark dark:text-slate-100;
+  font-feature-settings: 'tnum';
+}
