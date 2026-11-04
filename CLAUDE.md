@@ -11,7 +11,7 @@
 
 | Phase | Statut | Avancement | Critère de passage |
 | --- | --- | --- | --- |
-| 1 — Socle et suivi de base | 🚧 En cours | 7 / 16 | 7 jours d'usage réel sans bug bloquant |
+| 1 — Socle et suivi de base | 🚧 En cours | 8 / 16 | 7 jours d'usage réel sans bug bloquant |
 | 2 — Coach IA et Apple Santé | 🔒 Bloquée | 0 / 13 | Coach jugé utile, coût réel < 1 € sur 2 semaines, import Santé fiable 7 jours |
 | 3 — Moteur et bilans | 🔒 Bloquée | 0 / 8 | 3 bilans hebdo d'affilée sans chiffre faux |
 | 4 — Finitions | 🔒 Bloquée | 0 / 9 | Lighthouse PWA ≥ 90, audit sécurité et RGPD (sections 11 et 12) validé |
@@ -22,8 +22,8 @@ Le détail des tâches (cases à cocher) est en **section 16**. Les compteurs ci
 ### En ce moment
 
 - **Phase en cours** : 1
-- **Tâche en cours** : — (1.1 à 1.7 terminées)
-- **Prochaine tâche** : 1.8 — Check-ins matin et soir en boutons (section 3 du cahier des charges)
+- **Tâche en cours** : — (1.1 à 1.8 terminées)
+- **Prochaine tâche** : 1.9 — Habitudes à 3 paliers + boutons rapides (section 4 du cahier des charges ; les logs d'habitudes existent déjà depuis la 1.8)
 - **Bloquants / questions ouvertes** :
   - L'installation sur iPhone ne sera testable qu'après le déploiement (1.16) : il faut une URL en HTTPS.
   - « Maquette v1 » citée par le cahier des charges absente du dépôt : à ajouter dans `docs/` si disponible (utile pour l'écran Aujourd'hui, 1.10).
@@ -39,7 +39,7 @@ _Format : `- [date] description — impact — piste de correction`._
 - [2026-11-04] `npm audit` : 8 alertes modérées et 2 faibles dans `workbox-build` (glob, minimatch, deepmerge), utilisé seulement au build, rien dans le bundle — la CI n'échoue qu'au niveau haut — surveiller les mises à jour de `vite-plugin-pwa` via Dependabot.
 - [2026-11-04] Thème sombre : tokens et variante `dark` prêts, mais aucune bascule encore — prévu en 4.7.
 - [2026-11-04] secretlint ne reconnaît que les secrets à format connu (OpenAI, Cloudflare, GitHub, clés privées…) : `ACCESS_CODE` et `HEALTH_TOKEN` (chaînes aléatoires) ne seraient pas détectés — ne jamais les écrire hors de `.dev.vars` (ignoré par git) et `wrangler secret` — envisager une règle `secretlint-rule-pattern` en 2.1.
-- [2026-11-04] Repositories créés au fil des tâches (choix validé) : consentements, profil, roue de vie, mesures (écriture seule), habitudes (liste + remplacement des actives). À ajouter : journées (1.8), logs d'habitudes (1.9), réglages (1.15)… — `replaceActive` des habitudes ne convient qu'à l'onboarding : la 1.9 devra gérer ajout / désactivation.
+- [2026-11-04] Repositories créés au fil des tâches (choix validé) : consentements, profil, roue de vie, mesures (écriture seule), habitudes (liste + remplacement des actives), journées et logs d'habitudes (1.8). À ajouter : réglages (1.15)… — `replaceActive` des habitudes ne convient qu'à l'onboarding : la 1.9 devra gérer ajout / désactivation.
 - [2026-11-04] Écrans A2 (mesures) et A5 (objectifs) non pré-remplis quand on y revient — les repositories n'exposent pas encore de lecture — ajouter les lectures quand l'onglet Progrès / Profil en aura besoin.
 - [2026-11-04] Bundle JS de 313 Ko (102 Ko gzippé) dont Dexie et React Router — sous la cible « < 2 s en 4G » mais à surveiller — découper par route (lazy) si besoin, audit en 4.9.
 - [2026-11-04] Libellés du radar petits à 320 px (≈ 8 px) — les notes sont aussi listées en texte sous le radar — revoir avec la maquette ou en 3.3 (onglet Progrès).
@@ -47,6 +47,9 @@ _Format : `- [date] description — impact — piste de correction`._
 - [2026-11-04] Les consentements sont enregistrés mais rien ne les lit encore (IA, Santé, notifications n'existent pas) — chaque fonction concernée (2.2, 2.11, 4.2) devra vérifier `isGranted` avant tout envoi, et la révocation devra stopper le traitement (ex. désabonnement push, purge KV).
 - [2026-11-04] Activer « Notifications » ne demande pas encore l'autorisation du navigateur — prévu en 4.2.
 - [2026-11-04] Profil minimal (Confidentialité, Besoin d'aide) atteint par un lien « Profil » sur l'accueil — remplacé par la barre d'onglets en 1.10.
+- [2026-11-04] Les piliers Mouvement, Alimentation et Écrans ne sont pas encore saisis (minutes, repas, eau, alcool, écran le soir) : le cahier les rattache aux boutons rapides (1.9) et à la montre (2.12), pas aux check-ins — à vérifier quand le score sera calculé (3.1).
+- [2026-11-04] Le cahier prévoit un thème sombre pour le check-in du soir — reporté en 4.7 avec le thème sombre automatique.
+- [2026-11-04] Les habitudes d'une journée sont repérées par leur modèle (`habitId` = `templateId` dans `habitLogs`) : une seule habitude par modèle — à revoir si la 1.9 autorise des habitudes personnalisées.
 - [2026-11-04] `HelpScreen` garde sa propre mise en page au lieu de `PageLayout` — doublon mineur — l'aligner quand on y touchera (1.11).
 
 ### Journal des sessions
@@ -60,6 +63,7 @@ _Format : `- [date] description — impact — piste de correction`._
 | 2026-11-04 | 1.5 : schéma Dexie v1 (17 tables, v1 figée par un test), harnais de migration (`upToVersion`), entité `Consent` (refus par défaut, `aiJournal` dépend de `ai`), `DexieConsentRepository` | 64 tests, couverture domaine + application 100 % | `29528b0`, `bea2426`, `9960e10` | Rien (pas encore d'écran qui écrit en base) |
 | 2026-11-04 | Cahier des charges ajouté (`docs/`) ; couleur alignée sur #2563B8 ; 1.6 : onboarding partie A (A0 à A5) — domaine en TDD, 8 cas d'usage, schéma v2 (`lifeWheels`) + migration testée, 4 repositories, React Router 7, écrans + page « Besoin d'aide » ; règle ESLint « présentation → domaine : types seulement » | 175 tests, couverture domaine + application 99,5 % ; parcours complet vérifié dans le navigateur à 375 et 320 px, reprise après rechargement, données relues dans IndexedDB | `bb04e2d` … `160c19a` | Après le déploiement (1.16) : faire l'onboarding complet, quitter l'app en cours de route et vérifier la reprise, tester les liens 3114 / 15 / 112 |
 | 2026-11-04 | 1.7 : écran A6 (7e étape de l'onboarding, tout désactivé par défaut, journal verrouillé sans IA), Profil minimal, Profil → Confidentialité (enregistrement immédiat, date affichée, révocation en cascade) ; conteneur construit par `createUseCases` | 201 tests ; vérifié dans le navigateur à 375 et 320 px (utilisateur existant renvoyé sur A6, dates, révocation) | `4c63023`, `8dcc81b` | Après le déploiement (1.16) : valider l'écran A6, puis changer un choix dans Profil → Confidentialité et vérifier la date |
+| 2026-11-04 | 1.8 : check-ins du matin (coucher/réveil pré-remplis par le rythme, sommeil, énergie, priorité) et du soir (humeur en visages, stress, habitudes du jour, priorité tenue, victoire) ; `DayEntry`, `HabitLog`, repositories Dexie (pas de migration) ; cartes « À faire / Fait » sur l'accueil | 245 tests, couverture domaine + application 99 % ; vérifié dans le navigateur à 375 et 320 px (données relues dans IndexedDB, réponses reprises en rouvrant) | `aad0b8d` … `edcacde` | Après le déploiement (1.16) : faire les deux check-ins d'une vraie journée, chronométrer (objectif < 60 s), refaire un check-in après minuit pour vérifier qu'il compte pour la veille |
 
 ---
 
@@ -575,7 +579,7 @@ Chaque phase se termine par une app **utilisable et déployée**. Cocher les cas
 - [x] 1.5 Schéma Dexie v1 + repositories + tests de migration
 - [x] 1.6 Onboarding partie A (formulaire, roue de vie, horaires) — sans IA
 - [x] 1.7 Écran de consentements + Profil → Confidentialité
-- [ ] 1.8 Check-ins matin et soir en boutons
+- [x] 1.8 Check-ins matin et soir en boutons
 - [ ] 1.9 Habitudes à 3 paliers + boutons rapides
 - [ ] 1.10 Écran Aujourd'hui
 - [ ] 1.11 Filet de sécurité complet (`domain/safety`, `HelpBanner`, page « Besoin d'aide »)
@@ -701,6 +705,10 @@ Une tâche n'est terminée que si :
 | 2026-11-04 | Jour 0 = jour de validation de l'écran A0 ; mesures et roue de vie datées du jour 0 ; objectifs datés du jour du choix | Une seule « photo de départ » cohérente pour les comparaisons |
 | 2026-11-04 | Consentements : A6 est la 7e étape de l'onboarding ; un refus est aussi une décision datée ; Confidentialité enregistre chaque interrupteur immédiatement | Section 12 : consentement explicite, révocable, avec sa date ; un utilisateur déjà inscrit est renvoyé sur A6 |
 | 2026-11-04 | Profil minimal créé dès la 1.7 (lien depuis l'accueil) | La section 12 place Confidentialité dans Profil ; la barre d'onglets arrive en 1.10 |
+| 2026-11-04 | Format `dayEntries` : `{ date, morning, evening }`, chaque check-in daté (`completedAt` ISO) ; relu à travers les règles du domaine | Un enregistrement par jour (4 h du matin), refaire un check-in remplace ses réponses |
+| 2026-11-04 | Les habitudes du soir sont saisies dans le check-in du soir dès la 1.8 (table `habitLogs`, « pas fait » = 0) ; une habitude non renseignée n'est pas enregistrée | Le cahier les place dans le check-in du soir ; ne jamais inventer de réponse |
+| 2026-11-04 | Priorité du jour facultative (objectif, texte libre de 80 caractères, ou aucune) ; « priorité tenue » demandée seulement s'il y en avait une | Check-in en moins de 60 s, sans culpabiliser |
+| 2026-11-04 | Visages d'humeur dessinés en SVG (trait), pas d'emoji | Cahier, section 11 : « icônes en trait, jamais d'emoji » |
 | 2026-11-04 | Lecture des enregistrements Dexie via `asFields` + règles du domaine ; profil illisible = erreur de stockage, habitude illisible = ignorée | Aucune donnée corrompue affichée comme valide, sans dépendance supplémentaire |
 | 2026-11-04 | Conteneur fourni aux écrans via un contexte React (`ContainerProvider` / `useContainer`) | Injection sans import de l'infrastructure ; les tests injectent des faux |
 
