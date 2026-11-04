@@ -250,5 +250,9 @@ export const fr = {
       normal: 'journée sans',
       excellent: 'semaine sans',
     },
+    snacking: { label: 'Grignotage' },
+    alcohol: { label: 'Alcool' },
+    eveningSocialMedia: { label: 'Réseaux sociaux le soir' },
+    tobacco: { label: 'Tabac' },
   },
 } as const;

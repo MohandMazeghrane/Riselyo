@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { DAY_ROLLOVER_HOUR } from '../config/time';
-import { dayKeyOf, parseDayKey, previousDayKey, type DayKey } from './dayKey';
+import { dayKeyOf, daysBefore, parseDayKey, previousDayKey, type DayKey } from './dayKey';
 
 const day = (value: string): DayKey => {
   const result = parseDayKey(value);
@@ -52,5 +52,15 @@ describe('dayKeyOf', () => {
 
   it('belongs to the previous day right after midnight', () => {
     expect(dayKeyOf({ date: day('2026-11-04'), hour: 0, minute: 0 })).toBe('2026-11-03');
+  });
+});
+
+describe('daysBefore', () => {
+  it('lists the given number of days before a day, most recent first', () => {
+    expect(daysBefore(day('2026-03-02'), 3)).toEqual(['2026-03-01', '2026-02-28', '2026-02-27']);
+  });
+
+  it('lists nothing for zero days', () => {
+    expect(daysBefore(day('2026-03-02'), 0)).toEqual([]);
   });
 });

@@ -1,4 +1,4 @@
-import { chooseFirstGoals, type HabitTemplateId } from '../../domain/entities/habit';
+import { chooseFirstGoals, type DoHabitId } from '../../domain/entities/habit';
 import { markStepCompleted } from '../../domain/entities/profile';
 import type { Clock } from '../../domain/ports/clock';
 import type { HabitRepository, ProfileRepository } from '../../domain/ports/onboardingRepositories';
@@ -8,7 +8,7 @@ import type { Result } from '../../domain/shared/result';
 import { loadStartedProfile } from './loadStartedProfile';
 
 export type SubmitFirstGoals = (
-  templateIds: readonly HabitTemplateId[],
+  templateIds: readonly DoHabitId[],
 ) => Promise<Result<void, DomainError>>;
 
 /** Screen A5. Choosing again (after going back) replaces the previous choice. */

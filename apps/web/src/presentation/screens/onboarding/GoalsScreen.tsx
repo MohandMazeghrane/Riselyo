@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 import { ONBOARDING_FORM } from '../../../application/onboarding/onboardingForm';
-import type { HabitTemplateId } from '../../../domain/entities/habit';
+import type { DoHabitId } from '../../../domain/entities/habit';
 import { useContainer } from '../../app/ContainerContext';
 import { ROUTES } from '../../app/routes';
 import { FormMessage } from '../../components/FormMessage';
@@ -50,16 +50,16 @@ function GoalList({ goals }: { readonly goals: GoalSelection }): ReactNode {
 }
 
 interface GoalSelection {
-  readonly chosen: readonly HabitTemplateId[];
+  readonly chosen: readonly DoHabitId[];
   readonly tooMany: boolean;
-  readonly toggle: (id: HabitTemplateId) => void;
+  readonly toggle: (id: DoHabitId) => void;
 }
 
 /** A 4th pick is refused with a kind message rather than silently ignored. */
 function useGoalSelection(): GoalSelection {
-  const [chosen, setChosen] = useState<readonly HabitTemplateId[]>([]);
+  const [chosen, setChosen] = useState<readonly DoHabitId[]>([]);
   const [tooMany, setTooMany] = useState(false);
-  const toggle = (id: HabitTemplateId): void => {
+  const toggle = (id: DoHabitId): void => {
     const isChosen = chosen.includes(id);
     const full = chosen.length >= ONBOARDING_FORM.maxFirstGoals;
     setTooMany(!isChosen && full);

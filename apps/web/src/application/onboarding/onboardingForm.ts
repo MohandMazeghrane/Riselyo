@@ -1,7 +1,7 @@
 import {
   HABIT_CATALOGUE,
   startingTier,
-  type HabitTemplateId,
+  type DoHabitId,
   type HabitTier,
 } from '../../domain/entities/habit';
 import { LIFE_DOMAINS } from '../../domain/entities/lifeWheel';
@@ -47,7 +47,7 @@ export function defaultRhythmForm(): RhythmForm {
   return defaultRhythm();
 }
 
-export function startingTierOf(templateId: HabitTemplateId): HabitTier {
+export function startingTierOf(templateId: DoHabitId): HabitTier {
   return startingTier(templateId);
 }
 

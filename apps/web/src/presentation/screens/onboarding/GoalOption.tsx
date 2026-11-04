@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react';
 import { startingTierOf } from '../../../application/onboarding/onboardingForm';
-import type { HabitTemplateId } from '../../../domain/entities/habit';
+import type { DoHabitId } from '../../../domain/entities/habit';
 import { fr } from '../../content/fr';
 
 interface GoalOptionProps {
-  readonly id: HabitTemplateId;
+  readonly id: DoHabitId;
   readonly checked: boolean;
-  readonly onToggle: (id: HabitTemplateId) => void;
+  readonly onToggle: (id: DoHabitId) => void;
 }
 
 /** One habit of the catalogue, with the tier it will start at. */

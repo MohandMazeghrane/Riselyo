@@ -38,6 +38,17 @@ export function previousDayKey(day: DayKey): DayKey {
   return formatUtcDate(date) as DayKey;
 }
 
+/** The `count` days before `day`, most recent first. */
+export function daysBefore(day: DayKey, count: number): DayKey[] {
+  const days: DayKey[] = [];
+  let current = day;
+  for (let index = 0; index < count; index += 1) {
+    current = previousDayKey(current);
+    days.push(current);
+  }
+  return days;
+}
+
 function toUtcDate(input: string): Date | null {
   const match = DAY_KEY_PATTERN.exec(input);
   if (match === null) {
