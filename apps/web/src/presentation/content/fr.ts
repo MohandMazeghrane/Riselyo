@@ -84,7 +84,7 @@ export const fr = {
     title: 'Mes habitudes',
     activeTitle: 'Suivies en ce moment',
     noneActive: 'Aucune habitude suivie. Choisis-en une ci-dessous.',
-    target: (habit: string): string => `Palier visé pour « ${habit} »`,
+    target: 'Palier visé',
     reduceHint: 'Compteur de jours sans',
     stop: 'Arrêter',
     confirmStop: (habit: string): string => `Arrêter « ${habit} » ? Ton historique est conservé.`,

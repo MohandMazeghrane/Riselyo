@@ -47,7 +47,7 @@ function TargetTierChoice({ habit, action }: ActiveHabitItemProps): ReactNode {
   const { templateId } = habit;
   return (
     <ChoiceGroup
-      legend={fr.habitPlan.target(habitLabel(templateId))}
+      legend={fr.habitPlan.target}
       choices={targetTiersFor(templateId).map((tier) => ({
         value: tier,
         label: `${fr.checkIn.levels[tier]} : ${tierText(templateId, tier)}`,

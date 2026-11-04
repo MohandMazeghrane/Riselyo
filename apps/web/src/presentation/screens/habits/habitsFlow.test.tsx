@@ -115,7 +115,8 @@ describe('profile → my habits', () => {
   it('moves the target tier of a habit', async () => {
     const testApp = renderApp('/profil/habitudes', readyApp());
 
-    const target = await screen.findByRole('group', { name: 'Palier visé pour « Marcher »' });
+    const walk = await screen.findByRole('article', { name: 'Marcher' });
+    const target = within(walk).getByRole('group', { name: 'Palier visé' });
     fireEvent.click(within(target).getByRole('radio', { name: 'Normal : 30 min' }));
 
     await waitFor(() => {
