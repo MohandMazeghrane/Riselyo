@@ -11,7 +11,7 @@
 
 | Phase | Statut | Avancement | Critère de passage |
 | --- | --- | --- | --- |
-| 1 — Socle et suivi de base | 🚧 En cours | 9 / 16 | 7 jours d'usage réel sans bug bloquant |
+| 1 — Socle et suivi de base | 🚧 En cours | 10 / 16 | 7 jours d'usage réel sans bug bloquant |
 | 2 — Coach IA et Apple Santé | 🔒 Bloquée | 0 / 13 | Coach jugé utile, coût réel < 1 € sur 2 semaines, import Santé fiable 7 jours |
 | 3 — Moteur et bilans | 🔒 Bloquée | 0 / 8 | 3 bilans hebdo d'affilée sans chiffre faux |
 | 4 — Finitions | 🔒 Bloquée | 0 / 9 | Lighthouse PWA ≥ 90, audit sécurité et RGPD (sections 11 et 12) validé |
@@ -22,11 +22,11 @@ Le détail des tâches (cases à cocher) est en **section 16**. Les compteurs ci
 ### En ce moment
 
 - **Phase en cours** : 1
-- **Tâche en cours** : — (1.1 à 1.9 terminées)
-- **Prochaine tâche** : 1.10 — Écran Aujourd'hui (section 11 du cahier des charges) : barre des 5 onglets, mise en page de la maquette ; les habitudes et boutons rapides existent déjà sur l'accueil depuis la 1.9
+- **Tâche en cours** : — (1.1 à 1.10 terminées)
+- **Prochaine tâche** : 1.11 — Filet de sécurité complet (`domain/safety`, `HelpBanner`, page « Besoin d'aide » alignée sur `PageLayout`) ; section 10 de ce fichier et section 9 du cahier
 - **Bloquants / questions ouvertes** :
   - L'installation sur iPhone ne sera testable qu'après le déploiement (1.16) : il faut une URL en HTTPS.
-  - « Maquette v1 » citée par le cahier des charges absente du dépôt : à ajouter dans `docs/` si disponible (utile pour l'écran Aujourd'hui, 1.10).
+  - « Maquette v1 » citée par le cahier des charges absente du dépôt : l'écran Aujourd'hui (1.10) a été fait sans elle ; à ajouter dans `docs/` si disponible pour un ajustement visuel.
 
 ### Dette technique et problèmes connus
 
@@ -46,12 +46,15 @@ _Format : `- [date] description — impact — piste de correction`._
 - [2026-11-04] CSP `connect-src 'self'` — l'origine du Worker devra y être ajoutée en 2.1 (le test `securityHeaders.test.ts` le rappellera).
 - [2026-11-04] Les consentements sont enregistrés mais rien ne les lit encore (IA, Santé, notifications n'existent pas) — chaque fonction concernée (2.2, 2.11, 4.2) devra vérifier `isGranted` avant tout envoi, et la révocation devra stopper le traitement (ex. désabonnement push, purge KV).
 - [2026-11-04] Activer « Notifications » ne demande pas encore l'autorisation du navigateur — prévu en 4.2.
-- [2026-11-04] Profil minimal (Confidentialité, Besoin d'aide) atteint par un lien « Profil » sur l'accueil — remplacé par la barre d'onglets en 1.10.
 - [2026-11-04] Piliers : eau, marche, séances, repas sains et envies résistées sont saisis par les boutons rapides (1.9) ; restent non saisis l'alcool (hors habitudes), le grignotage hors habitude, l'écran le soir et le téléphone au lit — à revoir quand le score sera calculé (3.1) et avec la montre (2.12).
 - [2026-11-04] Le cahier prévoit un thème sombre pour le check-in du soir — reporté en 4.7 avec le thème sombre automatique.
 - [2026-11-04] Les habitudes sont repérées par leur modèle (`habitId` = `templateId` dans `habitLogs`, une ligne par modèle dans `habits`) : pas d'habitude personnalisée — à revoir si on en ajoute un jour.
 - [2026-11-04] « Envie résistée » est un simple compteur du jour ; le cahier dit qu'elle « compte comme une victoire » : à relier au journal des victoires (3.8) et aux badges (4.3).
-- [2026-11-04] Sur l'accueil, l'eau et la marche ajoutées aux boutons rapides ne cochent pas l'habitude : le palier atteint n'est que pré-rempli dans le check-in du soir (jamais de réponse inventée). Si c'est déroutant à l'usage, afficher la suggestion sur l'accueil — à juger en 1.10.
+- [2026-11-04] Sur l'accueil, l'eau et la marche ajoutées aux boutons rapides ne cochent pas l'habitude : le palier atteint n'est que pré-rempli dans le check-in du soir (jamais de réponse inventée). Si c'est déroutant à l'usage, afficher la suggestion sur l'accueil — à juger pendant les 7 jours d'usage réel.
+- [2026-11-04] Accueil sans anneau du score (3.1), niveau et série (4.3), bandeau du focus (3.5), bouton « Jour difficile » (2.9) ni phrase du coach (phase 2) — choix validé : chaque élément apparaît avec la tâche qui le calcule.
+- [2026-11-04] Onglets Coach, Progrès et Bilans = pages « Bientôt disponible » — à remplacer en 2.6, 3.3 et 3.4/3.5.
+- [2026-11-04] La barre d'onglets n'apparaît que sur les 5 onglets, pas sur les sous-pages du Profil (Confidentialité, Mes habitudes), qui gardent « Retour » — à revoir si la navigation paraît lourde à l'usage.
+- [2026-11-04] Après une mise à jour, la page déjà ouverte garde l'ancienne version jusqu'au prochain chargement (pas de rechargement automatique ni de message « nouvelle version ») — acceptable pour un seul utilisateur ; envisager un message en 4.9.
 - [2026-11-04] Le palier « Pas d'alcool : semaine sans » se coche à la main ; le calculer à partir des 7 derniers jours viendra avec le moteur (3.1 / 3.6).
 - [2026-11-04] `HabitRepository` dans `onboardingRepositories.ts` et `HabitLogRepository` dans `checkInRepositories.ts` : ports rangés par tâche d'origine — les regrouper dans `ports/habitRepositories.ts` lors d'un prochain passage.
 - [2026-11-04] `HelpScreen` garde sa propre mise en page au lieu de `PageLayout` — doublon mineur — l'aligner quand on y touchera (1.11).
@@ -67,6 +70,7 @@ _Format : `- [date] description — impact — piste de correction`._
 | 2026-11-04 | 1.5 : schéma Dexie v1 (17 tables, v1 figée par un test), harnais de migration (`upToVersion`), entité `Consent` (refus par défaut, `aiJournal` dépend de `ai`), `DexieConsentRepository` | 64 tests, couverture domaine + application 100 % | `29528b0`, `bea2426`, `9960e10` | Rien (pas encore d'écran qui écrit en base) |
 | 2026-11-04 | Cahier des charges ajouté (`docs/`) ; couleur alignée sur #2563B8 ; 1.6 : onboarding partie A (A0 à A5) — domaine en TDD, 8 cas d'usage, schéma v2 (`lifeWheels`) + migration testée, 4 repositories, React Router 7, écrans + page « Besoin d'aide » ; règle ESLint « présentation → domaine : types seulement » | 175 tests, couverture domaine + application 99,5 % ; parcours complet vérifié dans le navigateur à 375 et 320 px, reprise après rechargement, données relues dans IndexedDB | `bb04e2d` … `160c19a` | Après le déploiement (1.16) : faire l'onboarding complet, quitter l'app en cours de route et vérifier la reprise, tester les liens 3114 / 15 / 112 |
 | 2026-11-04 | 1.7 : écran A6 (7e étape de l'onboarding, tout désactivé par défaut, journal verrouillé sans IA), Profil minimal, Profil → Confidentialité (enregistrement immédiat, date affichée, révocation en cascade) ; conteneur construit par `createUseCases` | 201 tests ; vérifié dans le navigateur à 375 et 320 px (utilisateur existant renvoyé sur A6, dates, révocation) | `4c63023`, `8dcc81b` | Après le déploiement (1.16) : valider l'écran A6, puis changer un choix dans Profil → Confidentialité et vérifier la date |
+| 2026-11-04 | 1.10 : barre des 5 onglets (icônes en trait), pages « Bientôt disponible » pour Coach / Progrès / Bilans, retour à l'onboarding pour tous les onglets, priorité du jour (et si elle a été tenue) sur l'accueil, Profil devenu un onglet ; correctif PWA : la mise à jour du service worker restait en attente tant que l'app n'était pas fermée | 331 tests ; vérifié dans le navigateur à 375 et 320 px (rien de caché sous la barre, pas de défilement horizontal, aucune erreur console), mise à jour du service worker et onglet Bilans hors ligne vérifiés sur le build (serveur coupé) | `f912003`, `7c302a0` | Après le déploiement (1.16) : naviguer entre les 5 onglets d'une main, vérifier que la barre ne gêne pas la zone du bas de l'iPhone, puis après un 2e déploiement vérifier que la nouvelle version arrive en rouvrant l'app |
 | 2026-11-04 | 1.9 : habitudes à réduire (grignotage, alcool, réseaux le soir, tabac) avec jours sans ; toucher une habitude sur l'accueil pour noter le palier du jour ; 5 boutons rapides avec annulation ; Profil → Mes habitudes (palier visé, arrêt confirmé, ajout si les habitudes tiennent à 70 %) ; eau et marche pré-remplies au check-in du soir | 323 tests, couverture domaine + application 99,4 % ; vérifié dans le navigateur à 375 et 320 px (données relues dans IndexedDB, aucune erreur console) | `db0ec29` … `bac9450` | Après le déploiement (1.16) : toucher les habitudes et les boutons rapides pendant une vraie journée, vérifier le pré-remplissage du soir, arrêter puis rajouter une habitude |
 | 2026-11-04 | 1.8 : check-ins du matin (coucher/réveil pré-remplis par le rythme, sommeil, énergie, priorité) et du soir (humeur en visages, stress, habitudes du jour, priorité tenue, victoire) ; `DayEntry`, `HabitLog`, repositories Dexie (pas de migration) ; cartes « À faire / Fait » sur l'accueil | 245 tests, couverture domaine + application 99 % ; vérifié dans le navigateur à 375 et 320 px (données relues dans IndexedDB, réponses reprises en rouvrant) | `aad0b8d` … `edcacde` | Après le déploiement (1.16) : faire les deux check-ins d'une vraie journée, chronométrer (objectif < 60 s), refaire un check-in après minuit pour vérifier qu'il compte pour la veille |
 
@@ -586,7 +590,7 @@ Chaque phase se termine par une app **utilisable et déployée**. Cocher les cas
 - [x] 1.7 Écran de consentements + Profil → Confidentialité
 - [x] 1.8 Check-ins matin et soir en boutons
 - [x] 1.9 Habitudes à 3 paliers + boutons rapides
-- [ ] 1.10 Écran Aujourd'hui
+- [x] 1.10 Écran Aujourd'hui
 - [ ] 1.11 Filet de sécurité complet (`domain/safety`, `HelpBanner`, page « Besoin d'aide »)
 - [ ] 1.12 Export JSON / CSV et import validé par Zod
 - [ ] 1.13 « Tout supprimer » (partie locale)
@@ -721,6 +725,10 @@ Une tâche n'est terminée que si :
 | 2026-11-04 | Habitudes à réduire = catalogue fixe (grignotage, alcool, réseaux le soir, tabac), sans palier ; le soir : « Journée sans » / « C'est arrivé » ; jours sans = jours « sans » consécutifs, les jours non renseignés ne comptent pas et ne cassent pas la série | Cahier section 4 ; ne jamais inventer de réponse, jamais culpabiliser |
 | 2026-11-04 | Ajouter une habitude à construire : les actives doivent tenir à 70 % sur les 7 derniers jours (aujourd'hui exclu), avec au moins 3 jours renseignés ; les habitudes à réduire s'ajoutent librement ; une habitude arrêtée puis rajoutée repart au plus petit palier | Règle du cahier (section 4), fenêtre et minimum de jours choisis pour rester simples (constantes dans `domain/config/habits.ts`) |
 | 2026-11-04 | Accueil : un toucher fait passer le niveau du jour de « À noter » → minimum → normal → excellent → pas fait → minimum… ; le palier visé se change dans Profil → Mes habitudes | « Toucher pour changer de palier » (cahier section 11) lu comme le palier atteint du jour ; changer l'objectif reste un choix réfléchi |
+| 2026-11-04 | Barre des 5 onglets dès la 1.10 ; Coach, Progrès et Bilans ouvrent une page « Bientôt disponible » qui dit ce qu'ils contiendront | Choix de l'utilisateur : navigation définitive tout de suite, jamais de page vide |
+| 2026-11-04 | L'accueil n'affiche que des données réelles : pas d'anneau du score, de niveau, de série ni de focus avant les tâches qui les calculent ; pas de bouton « Jour difficile » avant la 2.9 | Choix de l'utilisateur ; l'app n'invente jamais un chiffre et aucun bouton ne mène à une page vide |
+| 2026-11-04 | Garde de l'onboarding déplacée dans `TabLayout` (route parente des 5 onglets) ; la barre n'est pas affichée sur l'onboarding, les check-ins et les sous-pages | Un seul endroit pour la règle ; les écrans ponctuels gardent toute la hauteur |
+| 2026-11-04 | Workbox `skipWaiting` + `clientsClaim` | Le script d'enregistrement n'envoie pas `SKIP_WAITING` : sans cela une mise à jour attendait la fermeture complète de l'app |
 | 2026-11-04 | L'eau et la marche des boutons rapides pré-remplissent le palier du soir (4/6/8 verres, 10/30/60 min) sans l'enregistrer d'office | L'utilisateur valide toujours ; aucune réponse inventée |
 
 > Ajouter une ligne à chaque décision structurante.
