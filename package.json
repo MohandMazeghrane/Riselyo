@@ -17,10 +17,13 @@
     "test": "vitest run",
     "test:domain": "vitest run apps/web/src/domain",
     "coverage": "vitest run --coverage",
-    "check": "npm run format:check && npm run lint && npm run typecheck && npm run test"
+    "check": "npm run format:check && npm run lint && npm run secrets && npm run typecheck && npm run test",
+    "secrets": "secretlint --maskSecrets \"**/*\"",
+    "prepare": "simple-git-hooks"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@secretlint/secretlint-rule-preset-recommend": "^13.1.0",
     "@types/node": "^24.19.2",
     "@vitest/coverage-v8": "^5.1.0",
     "eslint": "^10.14.0",
@@ -28,11 +31,16 @@
     "eslint-plugin-boundaries": "^7.4.1",
     "globals": "^17.14.0",
     "prettier": "^3.9.10",
+    "secretlint": "^13.1.0",
+    "simple-git-hooks": "^2.14.0",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.72.1",
     "vitest": "^5.1.0"
   },
   "overrides": {
     "minimatch": "^11.0.4"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "node scripts/check-staged-secrets.mjs"
   }
 }
