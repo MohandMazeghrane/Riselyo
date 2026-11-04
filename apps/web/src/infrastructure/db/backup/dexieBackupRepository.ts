@@ -4,7 +4,8 @@ import type { BackupRefusal, BackupRepository } from '../../../domain/ports/back
 import { domainError, type DomainError } from '../../../domain/shared/domainError';
 import { err, ok, type Result } from '../../../domain/shared/result';
 import { storageResult } from '../storageResult';
-import { ALL_TABLES, backupDocument, backupEnvelope, type BackupDocument } from './backupSchema';
+import type { BackupDocument } from './backupSchema';
+import { ALL_TABLES } from './tableNames';
 
 /** Whole-database export and restore, in the stored format, validated by Zod on the way in. */
 export class DexieBackupRepository implements BackupRepository {
@@ -33,7 +34,7 @@ export class DexieBackupRepository implements BackupRepository {
   }
 
   async restoreSnapshot(content: string): Promise<Result<void, DomainError>> {
-    const document = this.parse(content);
+    const document = await this.parse(content);
     if (!document.ok) {
       return document;
     }
@@ -50,13 +51,22 @@ export class DexieBackupRepository implements BackupRepository {
     );
   }
 
-  private parse(content: string): Result<BackupDocument, DomainError> {
+  /** Zod is only loaded when a backup is restored, to keep the first display fast. */
+  private async parse(content: string): Promise<Result<BackupDocument, DomainError>> {
     let json: unknown;
     try {
       json = JSON.parse(content);
     } catch {
       return refuse('not_json');
     }
+    const schemas = await storageResult(
+      'could not load the backup checker',
+      () => import('./backupSchema'),
+    );
+    if (!schemas.ok) {
+      return schemas;
+    }
+    const { backupDocument, backupEnvelope } = schemas.value;
     const envelope = backupEnvelope.safeParse(json);
     if (!envelope.success) {
       return refuse('not_a_backup');

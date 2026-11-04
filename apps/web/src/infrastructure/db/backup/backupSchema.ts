@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { BACKUP_FORMAT_VERSION } from '../../../domain/config/backup';
-import { SCHEMA_V1, SCHEMA_V2 } from '../schema';
 import {
   consentRecord,
   dayEntryRecord,
@@ -10,6 +9,7 @@ import {
   measurementRecord,
   profileRecord,
 } from './recordSchemas';
+import { ALL_TABLES } from './tableNames';
 
 /** Tables whose records exist today; every other table must still be empty in a backup. */
 const FILLED_TABLES = {
@@ -21,8 +21,6 @@ const FILLED_TABLES = {
   measurements: z.array(measurementRecord),
   lifeWheels: z.array(lifeWheelRecord),
 };
-
-export const ALL_TABLES = Object.keys({ ...SCHEMA_V1, ...SCHEMA_V2 });
 
 const EMPTY_TABLES = Object.fromEntries(
   ALL_TABLES.filter((table) => !(table in FILLED_TABLES)).map((table) => [
