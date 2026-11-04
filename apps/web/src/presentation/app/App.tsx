@@ -17,10 +17,12 @@ import { PrivacyScreen } from '../screens/privacy/PrivacyScreen';
 import { ProfileScreen } from '../screens/profile/ProfileScreen';
 import { TodayScreen } from '../screens/today/TodayScreen';
 import { UpcomingTabScreen } from '../screens/upcoming/UpcomingTabScreen';
+import { usePurgeOnLaunch } from '../hooks/usePurgeOnLaunch';
 import { ROUTES } from './routes';
 import { TabLayout } from './TabLayout';
 
 export function App(): ReactNode {
+  usePurgeOnLaunch();
   return (
     <Routes>
       <Route element={<TabLayout />}>

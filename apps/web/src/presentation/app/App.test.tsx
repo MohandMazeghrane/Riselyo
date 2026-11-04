@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { createTestApp } from '../../../test/fakes/testContainer';
 import { finishedProfile, renderApp } from '../../../test/renderApp';
@@ -88,5 +88,23 @@ describe('ContainerProvider', () => {
     expect(() => render(<App />)).toThrow();
 
     window.removeEventListener('error', silenceExpectedCrash);
+  });
+});
+
+describe('launch', () => {
+  it('purges expired data once the app starts, whatever the screen', async () => {
+    const testApp = renderApp('/aide');
+
+    await waitFor(() => {
+      expect(testApp.purger.received.length).toBeGreaterThan(0);
+    });
+  });
+
+  it('keeps working when the purge fails', async () => {
+    const testApp = createTestApp();
+    testApp.purger.failing = true;
+    renderApp('/aide', testApp);
+
+    expect(await screen.findByRole('heading', { name: 'Besoin d’aide' })).toBeInTheDocument();
   });
 });
