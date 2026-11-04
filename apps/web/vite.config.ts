@@ -44,6 +44,10 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,woff2,webmanifest}'],
         navigateFallback: 'index.html',
         cleanupOutdatedCaches: true,
+        // The registration script never sends SKIP_WAITING: without these, an update would wait
+        // until every window of the installed app is closed.
+        skipWaiting: true,
+        clientsClaim: true,
       },
     }),
   ],
