@@ -4,6 +4,8 @@ import type { OnboardingStep } from '../../domain/entities/onboarding';
 export const ROUTES = {
   today: '/',
   help: '/aide',
+  profile: '/profil',
+  privacy: '/profil/confidentialite',
   welcome: '/demarrage',
   lifeWheel: '/demarrage/roue-de-vie',
   lifeWheelResult: '/demarrage/point-de-depart',
@@ -11,6 +13,7 @@ export const ROUTES = {
   rhythm: '/demarrage/rythme',
   why: '/demarrage/pourquoi',
   goals: '/demarrage/objectifs',
+  consents: '/demarrage/confidentialite',
 } as const;
 
 export const STEP_ROUTES: Readonly<Record<OnboardingStep, string>> = {
@@ -20,6 +23,7 @@ export const STEP_ROUTES: Readonly<Record<OnboardingStep, string>> = {
   rhythm: ROUTES.rhythm,
   why: ROUTES.why,
   goals: ROUTES.goals,
+  consents: ROUTES.consents,
 };
 
-export const ONBOARDING_SCREEN_COUNT = 6;
+export const ONBOARDING_SCREEN_COUNT = 7;

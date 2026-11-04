@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { Navigate } from 'react-router';
-import { STEP_ROUTES } from '../../app/routes';
+import { Link, Navigate } from 'react-router';
+import { ROUTES, STEP_ROUTES } from '../../app/routes';
 import { LoadState } from '../../components/LoadState';
 import { fr } from '../../content/fr';
 import { useCurrentDayLabel } from '../../hooks/useCurrentDayLabel';
@@ -24,7 +24,15 @@ function TodayContent({ firstName }: { readonly firstName: string }): ReactNode 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-6 px-5 pt-[max(env(safe-area-inset-top),2rem)] pb-[max(env(safe-area-inset-bottom),2rem)]">
       <header>
-        <p className="text-sm font-medium text-brand-600">{fr.appName}</p>
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium text-brand-600">{fr.appName}</p>
+          <Link
+            to={ROUTES.profile}
+            className="flex min-h-11 items-center font-medium text-brand-700"
+          >
+            {fr.home.profile}
+          </Link>
+        </div>
         <h1 className="mt-1 text-3xl font-bold">{fr.home.greeting(firstName)}</h1>
         <p className="mt-1 text-slate-600 first-letter:uppercase">{dayLabel}</p>
       </header>

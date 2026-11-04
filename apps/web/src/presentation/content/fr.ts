@@ -18,6 +18,53 @@ export const fr = {
     greeting: (firstName: string): string => `Bonjour ${firstName}`,
     upcoming: 'Ton suivi du jour arrive très bientôt.',
     offlineReady: 'Riselyo fonctionne aussi sans connexion.',
+    profile: 'Profil',
+  },
+  profile: {
+    title: 'Profil',
+    privacy: 'Confidentialité',
+    privacyHint: 'Choisir ce qui peut quitter ton téléphone',
+    help: 'Besoin d’aide',
+    helpHint: '3114, 15, 112 : des personnes à qui parler',
+  },
+  consents: {
+    onboardingTitle: 'Tes données, tes choix',
+    privacyTitle: 'Confidentialité',
+    intro:
+      'Tout est désactivé par défaut. Active seulement ce qui te convient : tu pourras changer d’avis à tout moment dans Profil → Confidentialité.',
+    localTracking:
+      'Ton suivi (check-ins, habitudes, mesures) reste toujours sur ton téléphone. Il n’a pas besoin de ton accord pour fonctionner.',
+    upcoming:
+      'Ces fonctions arrivent dans les prochaines versions ; ton choix sera respecté dès leur arrivée.',
+    confirm: 'Valider mes choix',
+    journalNeedsAi: 'Active d’abord le coach IA.',
+    purposes: {
+      ai: {
+        label: 'Coach IA',
+        description:
+          'Ton prénom et des résumés chiffrés (jamais tes notes brutes, photos ou mesures) sont envoyés à OpenAI via le serveur Riselyo, pour rédiger tes bilans et te répondre.',
+      },
+      aiJournal: {
+        label: 'Journal partagé avec le coach',
+        description:
+          'Le texte de ton journal est aussi transmis au coach IA, pour qu’il t’aide à prendre du recul.',
+      },
+      health: {
+        label: 'Apple Santé',
+        description:
+          'Sommeil, pas, minutes d’exercice, entraînements et fréquence cardiaque au repos transitent chiffrés par le serveur Riselyo (7 jours au plus), puis sont effacés.',
+      },
+      notifications: {
+        label: 'Notifications',
+        description:
+          '3 rappels par jour au plus, jamais la nuit, avec un texte discret sur l’écran verrouillé.',
+      },
+    },
+    status: {
+      undecided: 'Pas encore choisi',
+      granted: (date: string): string => `Activé le ${date}`,
+      refused: (date: string): string => `Désactivé le ${date}`,
+    },
   },
   help: {
     title: 'Besoin d’aide',

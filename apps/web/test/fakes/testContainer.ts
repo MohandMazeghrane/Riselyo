@@ -1,10 +1,10 @@
-import { createGetCurrentDay } from '../../src/application/day/getCurrentDay';
 import { parseDayKey } from '../../src/domain/shared/dayKey';
-import { createOnboardingUseCases, type AppContainer } from '../../src/presentation/app/container';
+import { createUseCases, type AppContainer } from '../../src/presentation/app/useCases';
 import { unwrap } from '../fixtures/unwrap';
 import { FakeClock } from './fakeClock';
 import {
   InMemoryBodyMeasurementsRepository,
+  InMemoryConsentRepository,
   InMemoryHabitRepository,
   InMemoryLifeWheelRepository,
   InMemoryProfileRepository,
@@ -17,6 +17,7 @@ export interface TestApp {
   readonly lifeWheels: InMemoryLifeWheelRepository;
   readonly measurements: InMemoryBodyMeasurementsRepository;
   readonly habits: InMemoryHabitRepository;
+  readonly consents: InMemoryConsentRepository;
 }
 
 /** The real use cases wired to in-memory repositories, for screen tests. */
@@ -26,15 +27,13 @@ export function createTestApp(isoDay = '2026-11-04', hour = 10): TestApp {
     hour,
     minute: 0,
   });
-  const repositories = {
+  const adapters = {
+    clock,
     profiles: new InMemoryProfileRepository(),
     lifeWheels: new InMemoryLifeWheelRepository(),
     measurements: new InMemoryBodyMeasurementsRepository(),
     habits: new InMemoryHabitRepository(),
+    consents: new InMemoryConsentRepository(),
   };
-  const container: AppContainer = {
-    getCurrentDay: createGetCurrentDay({ clock }),
-    onboarding: createOnboardingUseCases(repositories, clock),
-  };
-  return { container, clock, ...repositories };
+  return { container: createUseCases(adapters), ...adapters };
 }

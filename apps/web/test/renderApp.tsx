@@ -24,6 +24,6 @@ export function finishedProfile(firstName = 'Sam'): Profile {
     dayZero: '2026-11-04' as DayKey,
     why: null,
     rhythm: null,
-    completedSteps: ['welcome', 'lifeWheel', 'measurements', 'rhythm', 'why', 'goals'],
+    completedSteps: ['welcome', 'lifeWheel', 'measurements', 'rhythm', 'why', 'goals', 'consents'],
   };
 }

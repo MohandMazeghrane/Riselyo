@@ -11,7 +11,7 @@ describe('first launch', () => {
     expect(
       await screen.findByRole('heading', { name: 'Bienvenue sur Riselyo' }),
     ).toBeInTheDocument();
-    expect(screen.getByText('Étape 1 sur 6')).toBeInTheDocument();
+    expect(screen.getByText('Étape 1 sur 7')).toBeInTheDocument();
   });
 
   it('resumes the onboarding where it was left', async () => {

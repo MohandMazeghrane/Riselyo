@@ -42,6 +42,9 @@ describe('onboarding part A', () => {
     fireEvent.click(await screen.findByRole('checkbox', { name: /Marcher/ }));
     fireEvent.click(screen.getByRole('button', { name: 'C’est parti' }));
 
+    expect(await screen.findByText('Étape 7 sur 7')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Valider mes choix' }));
+
     expect(await screen.findByRole('heading', { name: 'Bonjour Sam' })).toBeInTheDocument();
     expect(testApp.profiles.profile?.why).toBe('pour moi');
     expect(testApp.habits.habits.map((habit) => habit.templateId)).toEqual(['walk']);

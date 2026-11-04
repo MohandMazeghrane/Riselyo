@@ -15,7 +15,7 @@ export function GoalsScreen(): ReactNode {
   const navigate = useNavigate();
   const goals = useGoalSelection();
   const submission = useSubmit(useContainer().onboarding.submitFirstGoals, () => {
-    void navigate(ROUTES.today, { replace: true });
+    void navigate(ROUTES.consents);
   });
   return (
     <StepForm
