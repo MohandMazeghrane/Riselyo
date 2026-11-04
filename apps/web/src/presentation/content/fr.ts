@@ -26,6 +26,83 @@ export const fr = {
     privacyHint: 'Choisir ce qui peut quitter ton téléphone',
     help: 'Besoin d’aide',
     helpHint: '3114, 15, 112 : des personnes à qui parler',
+    habits: 'Mes habitudes',
+    habitsHint: 'Paliers, ajouts et pauses',
+  },
+  todayHabits: {
+    title: 'Tes habitudes',
+    hint: 'Touche une habitude pour noter le palier atteint aujourd’hui.',
+    empty: 'Aucune habitude suivie pour l’instant.',
+    manage: 'Gérer mes habitudes',
+    notLogged: 'À noter',
+    target: (tier: string): string => `Objectif : ${tier}`,
+    daysWithout: (days: number): string => {
+      if (days === 0) {
+        return 'Nouveau départ';
+      }
+      return days === 1 ? '1 jour sans' : `${String(days)} jours sans`;
+    },
+    tapLabel: (habit: string, level: string): string =>
+      `${habit} : ${level}. Toucher pour changer.`,
+    reduceLevels: { none: 'C’est arrivé', normal: 'Journée sans' },
+  },
+  quick: {
+    title: 'En un geste',
+    limit: 'C’est le maximum pour aujourd’hui.',
+    actions: {
+      waterGlasses: {
+        add: '+1 verre d’eau',
+        remove: 'Retirer 1 verre d’eau',
+        count: (value: number): string =>
+          value <= 1 ? `${String(value)} verre` : `${String(value)} verres`,
+      },
+      walkMinutes: {
+        add: '+10 min de marche',
+        remove: 'Retirer 10 min de marche',
+        count: (value: number): string => `${String(value)} min`,
+      },
+      workouts: {
+        add: '+1 séance',
+        remove: 'Retirer 1 séance',
+        count: (value: number): string =>
+          value <= 1 ? `${String(value)} séance` : `${String(value)} séances`,
+      },
+      healthyMeals: {
+        add: 'Repas sain',
+        remove: 'Retirer 1 repas sain',
+        count: (value: number): string => `${String(value)} repas`,
+      },
+      cravingsResisted: {
+        add: 'Envie résistée',
+        remove: 'Retirer 1 envie résistée',
+        count: (value: number): string =>
+          value <= 1 ? `${String(value)} victoire` : `${String(value)} victoires`,
+      },
+    },
+  },
+  habitPlan: {
+    title: 'Mes habitudes',
+    activeTitle: 'Suivies en ce moment',
+    noneActive: 'Aucune habitude suivie. Choisis-en une ci-dessous.',
+    target: (habit: string): string => `Palier visé pour « ${habit} »`,
+    reduceHint: 'Compteur de jours sans',
+    stop: 'Arrêter',
+    confirmStop: (habit: string): string => `Arrêter « ${habit} » ? Ton historique est conservé.`,
+    confirm: 'Oui, arrêter',
+    cancel: 'Annuler',
+    toBuildTitle: 'Habitudes à construire',
+    toReduceTitle: 'Habitudes à réduire',
+    toReduceHint: 'Un compteur de jours sans, et le bouton « Envie résistée » sur l’accueil.',
+    add: (habit: string): string => `Ajouter « ${habit} »`,
+    addShort: 'Ajouter',
+    waitIntro:
+      'Une nouvelle habitude s’installe mieux quand les actuelles tiennent déjà. Tu pourras en ajouter une bientôt.',
+    reasons: {
+      not_enough_data: (days: number, needed: number): string =>
+        `Note tes habitudes encore ${String(needed - days)} soir${needed - days > 1 ? 's' : ''} : on verra alors si c’est le bon moment.`,
+      low_adherence: (percent: number, needed: number): string =>
+        `Cette semaine, tes habitudes tiennent à ${String(percent)} %. Une nouvelle trouvera mieux sa place à partir de ${String(needed)} %.`,
+    },
   },
   consents: {
     onboardingTitle: 'Tes données, tes choix',

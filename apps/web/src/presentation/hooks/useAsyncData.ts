@@ -7,10 +7,17 @@ export type AsyncData<T> =
   | { readonly status: 'error' }
   | { readonly status: 'ready'; readonly data: T };
 
+export interface AsyncDataControls {
+  /** Shows the loading state again, then reloads (after an error). */
+  readonly retry: () => void;
+  /** Reloads in the background, keeping the current data on screen (after a change). */
+  readonly reload: () => void;
+}
+
 /** Loads data once (and again on retry); every screen renders loading, error and ready. */
 export function useAsyncData<T>(
   load: () => Promise<Result<T, DomainError>>,
-): AsyncData<T> & { readonly retry: () => void } {
+): AsyncData<T> & AsyncDataControls {
   const [state, setState] = useState<AsyncData<T>>({ status: 'loading' });
   const [attempt, setAttempt] = useState(0);
 
@@ -31,5 +38,9 @@ export function useAsyncData<T>(
     setAttempt((value) => value + 1);
   }, []);
 
-  return { ...state, retry };
+  const reload = useCallback(() => {
+    setAttempt((value) => value + 1);
+  }, []);
+
+  return { ...state, retry, reload };
 }

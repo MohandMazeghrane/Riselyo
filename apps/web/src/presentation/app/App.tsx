@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
+import { HabitPlanScreen } from '../screens/habits/HabitPlanScreen';
 import { HelpScreen } from '../screens/help/HelpScreen';
 import { GoalsScreen } from '../screens/onboarding/GoalsScreen';
 import { LifeWheelResultScreen } from '../screens/onboarding/LifeWheelResultScreen';
@@ -31,6 +32,7 @@ export function App(): ReactNode {
       <Route path={ROUTES.consents} element={<ConsentsScreen />} />
       <Route path={ROUTES.profile} element={<ProfileScreen />} />
       <Route path={ROUTES.privacy} element={<PrivacyScreen />} />
+      <Route path={ROUTES.habits} element={<HabitPlanScreen />} />
       <Route path={ROUTES.morningCheckIn} element={<MorningCheckInScreen />} />
       <Route path={ROUTES.eveningCheckIn} element={<EveningCheckInScreen />} />
       <Route path="*" element={<Navigate to={ROUTES.today} replace />} />

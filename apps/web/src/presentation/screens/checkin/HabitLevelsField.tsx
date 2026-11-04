@@ -4,6 +4,7 @@ import type { Habit } from '../../../domain/entities/habit';
 import type { HabitLevelAnswers } from '../../../domain/entities/habitLog';
 import { ChoiceGroup } from '../../components/ChoiceGroup';
 import { fr } from '../../content/fr';
+import { habitLabel, levelText } from '../../content/habitTexts';
 
 interface HabitLevelsFieldProps {
   readonly habits: readonly Habit[];
@@ -19,13 +20,13 @@ export function HabitLevelsField({ habits, answers, onChange }: HabitLevelsField
   return (
     <section className="flex flex-col gap-4">
       <h2 className="font-semibold">{fr.checkIn.habitsTitle}</h2>
-      {habits.map(({ templateId }) => (
+      {habits.map(({ templateId, kind }) => (
         <ChoiceGroup
           key={templateId}
-          legend={fr.habits[templateId].label}
+          legend={habitLabel(templateId)}
           choices={habitLevelsFor(templateId).map((level) => ({
             value: level,
-            label: fr.checkIn.levels[level],
+            label: levelText(kind, level),
           }))}
           value={answers[templateId]}
           onChange={(level) => {

@@ -4,6 +4,7 @@ import type { DailyPriority } from '../../../domain/entities/dayEntry';
 import type { Habit } from '../../../domain/entities/habit';
 import { TextField } from '../../components/TextField';
 import { fr } from '../../content/fr';
+import { habitLabel } from '../../content/habitTexts';
 
 interface PriorityPickerProps {
   readonly habits: readonly Habit[];
@@ -51,7 +52,7 @@ function priorityOptions(habits: readonly Habit[], freeText: string): PriorityOp
   return [
     ...habits.map(({ templateId }) => ({
       key: templateId,
-      label: fr.habits[templateId].label,
+      label: habitLabel(templateId),
       priority: { kind: 'habit', templateId } as const,
     })),
     { key: 'free', label: fr.checkIn.priorityFree, priority: { kind: 'free', text: freeText } },

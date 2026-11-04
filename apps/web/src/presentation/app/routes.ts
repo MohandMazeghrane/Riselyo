@@ -6,6 +6,7 @@ export const ROUTES = {
   help: '/aide',
   profile: '/profil',
   privacy: '/profil/confidentialite',
+  habits: '/profil/habitudes',
   morningCheckIn: '/check-in/matin',
   eveningCheckIn: '/check-in/soir',
   welcome: '/demarrage',
