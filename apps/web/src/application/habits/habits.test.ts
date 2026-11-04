@@ -14,7 +14,7 @@ import { createAdjustQuickCount } from './adjustQuickCount';
 import { createChangeHabitTarget } from './changeHabitTarget';
 import { createGetHabitPlan } from './getHabitPlan';
 import { createGetTodayHabits } from './getTodayHabits';
-import { HABITS_FORM, levelAfterTap, targetTiersFor } from './habitsForm';
+import { HABITS_FORM, habitKindOf, levelAfterTap, targetTiersFor } from './habitsForm';
 import { createLogHabitLevel } from './logHabitLevel';
 import { createStopHabit } from './stopHabit';
 
@@ -217,5 +217,6 @@ describe('habitsForm', () => {
   it('cycles levels and lists target tiers', () => {
     expect(levelAfterTap('walk', undefined)).toBe('min');
     expect(targetTiersFor('noAlcohol')).toEqual(['normal', 'excellent']);
+    expect(habitKindOf('tobacco')).toBe('reduce');
   });
 });

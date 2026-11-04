@@ -10,6 +10,7 @@ export const ROUTES = {
   profile: '/profil',
   privacy: '/profil/confidentialite',
   habits: '/profil/habitudes',
+  myData: '/profil/donnees',
   morningCheckIn: '/check-in/matin',
   eveningCheckIn: '/check-in/soir',
   welcome: '/demarrage',

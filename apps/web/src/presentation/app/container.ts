@@ -1,5 +1,6 @@
 import { SystemClock } from '../../infrastructure/clock/systemClock';
 import { createRiselyoDatabase } from '../../infrastructure/db/database';
+import { DexieBackupRepository } from '../../infrastructure/db/backup/dexieBackupRepository';
 import { DexieBodyMeasurementsRepository } from '../../infrastructure/db/repositories/dexieBodyMeasurementsRepository';
 import { DexieConsentRepository } from '../../infrastructure/db/repositories/dexieConsentRepository';
 import { DexieDayEntryRepository } from '../../infrastructure/db/repositories/dexieDayEntryRepository';
@@ -21,6 +22,7 @@ export function createContainer(): AppContainer {
     consents: new DexieConsentRepository(db),
     dayEntries: new DexieDayEntryRepository(db),
     habitLogs: new DexieHabitLogRepository(db),
+    backup: new DexieBackupRepository(db),
   });
 }
 

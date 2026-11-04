@@ -11,6 +11,7 @@ import { emptyDayEntry, type DayEntry } from '../../domain/entities/dayEntry';
 import { emptyQuickCounts } from '../../domain/entities/quickCounts';
 import { parseDayKey } from '../../domain/shared/dayKey';
 import type { TimeOfDay } from '../../domain/shared/timeOfDay';
+import { backupRefusalOf } from './backupRefusal';
 import { buildDaysCsv, DAY_COLUMNS, type DaysCsvLabels } from './daysCsv';
 import { createExportBackup } from './exportBackup';
 import { createExportDaysCsv } from './exportDaysCsv';
@@ -149,5 +150,13 @@ describe('exportDaysCsv', () => {
     app.habitLogs.failing = false;
     app.dayEntries.failing = true;
     expect((await app.exportCsv(LABELS)).ok).toBe(false);
+  });
+});
+
+describe('backupRefusalOf', () => {
+  it('reads why a file was refused, and only that', () => {
+    expect(backupRefusalOf({ code: 'invalid_input', detail: 'not_json' })).toBe('not_json');
+    expect(backupRefusalOf({ code: 'invalid_input', detail: 'other' })).toBeNull();
+    expect(backupRefusalOf({ code: 'storage_failure', detail: 'not_json' })).toBeNull();
   });
 });

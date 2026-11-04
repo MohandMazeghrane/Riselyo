@@ -5,7 +5,9 @@ import {
 } from '../../domain/config/habits';
 import {
   HABIT_CATALOGUE,
+  kindOf,
   REDUCE_HABIT_CATALOGUE,
+  type HabitKind,
   type HabitTemplateId,
   type HabitTier,
 } from '../../domain/entities/habit';
@@ -40,4 +42,8 @@ export function levelAfterTap(
 /** Tiers a habit to build can aim at ("no alcohol" has no minimum). */
 export function targetTiersFor(templateId: HabitTemplateId): HabitTier[] {
   return levelsAvailableFor(templateId).filter((level): level is HabitTier => level !== 'none');
+}
+
+export function habitKindOf(templateId: HabitTemplateId): HabitKind {
+  return kindOf(templateId);
 }

@@ -3,6 +3,7 @@ import { createUseCases, type AppContainer } from '../../src/presentation/app/us
 import { unwrap } from '../fixtures/unwrap';
 import { FakeClock } from './fakeClock';
 import {
+  InMemoryBackupRepository,
   InMemoryBodyMeasurementsRepository,
   InMemoryConsentRepository,
   InMemoryDayEntryRepository,
@@ -22,6 +23,7 @@ export interface TestApp {
   readonly consents: InMemoryConsentRepository;
   readonly dayEntries: InMemoryDayEntryRepository;
   readonly habitLogs: InMemoryHabitLogRepository;
+  readonly backup: InMemoryBackupRepository;
 }
 
 /** The real use cases wired to in-memory repositories, for screen tests. */
@@ -40,6 +42,7 @@ export function createTestApp(isoDay = '2026-11-04', hour = 10): TestApp {
     consents: new InMemoryConsentRepository(),
     dayEntries: new InMemoryDayEntryRepository(),
     habitLogs: new InMemoryHabitLogRepository(),
+    backup: new InMemoryBackupRepository(),
   };
   return { container: createUseCases(adapters), ...adapters };
 }

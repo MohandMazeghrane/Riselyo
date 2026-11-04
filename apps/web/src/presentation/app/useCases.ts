@@ -31,6 +31,9 @@ import {
 import { createSubmitWhy, type SubmitWhy } from '../../application/onboarding/submitWhy';
 import { createGetConsents, type GetConsents } from '../../application/privacy/getConsents';
 import { createUpdateConsent, type UpdateConsent } from '../../application/privacy/updateConsent';
+import { createExportBackup, type ExportBackup } from '../../application/privacy/exportBackup';
+import { createExportDaysCsv, type ExportDaysCsv } from '../../application/privacy/exportDaysCsv';
+import { createImportBackup, type ImportBackup } from '../../application/privacy/importBackup';
 import { createGetCheckInDay, type GetCheckInDay } from '../../application/checkin/getCheckInDay';
 import {
   createSubmitEveningCheckIn,
@@ -74,6 +77,9 @@ export interface OnboardingUseCases {
 export interface PrivacyUseCases {
   readonly getConsents: GetConsents;
   readonly updateConsent: UpdateConsent;
+  readonly exportBackup: ExportBackup;
+  readonly exportDaysCsv: ExportDaysCsv;
+  readonly importBackup: ImportBackup;
 }
 
 export interface CheckInUseCases {
@@ -111,6 +117,9 @@ export function createUseCases(adapters: AppAdapters): AppContainer {
     privacy: {
       getConsents: createGetConsents({ consents }),
       updateConsent: createUpdateConsent({ consents, clock }),
+      exportBackup: createExportBackup(adapters),
+      exportDaysCsv: createExportDaysCsv(adapters),
+      importBackup: createImportBackup(adapters),
     },
     checkIn: {
       getDay: createGetCheckInDay(adapters),
