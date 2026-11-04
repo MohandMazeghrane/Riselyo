@@ -36,6 +36,10 @@ import { createExportDaysCsv, type ExportDaysCsv } from '../../application/priva
 import { createImportBackup, type ImportBackup } from '../../application/privacy/importBackup';
 import { createEraseAllData, type EraseAllData } from '../../application/privacy/eraseAllData';
 import { createGetStoredData, type GetStoredData } from '../../application/privacy/getStoredData';
+import {
+  createPurgeExpiredData,
+  type PurgeExpiredData,
+} from '../../application/privacy/purgeExpiredData';
 import { createGetCheckInDay, type GetCheckInDay } from '../../application/checkin/getCheckInDay';
 import {
   createSubmitEveningCheckIn,
@@ -84,6 +88,7 @@ export interface PrivacyUseCases {
   readonly importBackup: ImportBackup;
   readonly eraseAllData: EraseAllData;
   readonly getStoredData: GetStoredData;
+  readonly purgeExpiredData: PurgeExpiredData;
 }
 
 export interface CheckInUseCases {
@@ -126,6 +131,7 @@ export function createUseCases(adapters: AppAdapters): AppContainer {
       importBackup: createImportBackup(adapters),
       eraseAllData: createEraseAllData(adapters),
       getStoredData: createGetStoredData(adapters),
+      purgeExpiredData: createPurgeExpiredData(adapters),
     },
     checkIn: {
       getDay: createGetCheckInDay(adapters),

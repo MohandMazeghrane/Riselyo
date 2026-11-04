@@ -7,7 +7,7 @@ describe('createContainer', () => {
 
     expect(container.getCurrentDay()).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(Object.keys(container.onboarding)).toHaveLength(9);
-    expect(Object.keys(container.privacy)).toHaveLength(7);
+    expect(Object.keys(container.privacy)).toHaveLength(8);
     expect(Object.keys(container.checkIn)).toHaveLength(3);
     expect(Object.keys(container.habits)).toHaveLength(7);
     expect(Object.keys(container.safety)).toHaveLength(1);

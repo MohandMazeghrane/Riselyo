@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { DAY_ROLLOVER_HOUR } from '../config/time';
-import { dayKeyOf, daysBefore, parseDayKey, previousDayKey, type DayKey } from './dayKey';
+import {
+  dayKeyOf,
+  daysBefore,
+  monthsBefore,
+  parseDayKey,
+  previousDayKey,
+  type DayKey,
+} from './dayKey';
 
 const day = (value: string): DayKey => {
   const result = parseDayKey(value);
@@ -62,5 +69,22 @@ describe('daysBefore', () => {
 
   it('lists nothing for zero days', () => {
     expect(daysBefore(day('2026-03-02'), 0)).toEqual([]);
+  });
+});
+
+describe('monthsBefore', () => {
+  it('keeps the day of the month', () => {
+    expect(monthsBefore(day('2026-11-20'), 12)).toBe('2025-11-20');
+    expect(monthsBefore(day('2026-03-15'), 1)).toBe('2026-02-15');
+  });
+
+  it('clamps to the last day of a shorter month', () => {
+    expect(monthsBefore(day('2026-03-31'), 1)).toBe('2026-02-28');
+    expect(monthsBefore(day('2028-02-29'), 12)).toBe('2027-02-28');
+    expect(monthsBefore(day('2026-05-31'), 1)).toBe('2026-04-30');
+  });
+
+  it('crosses years', () => {
+    expect(monthsBefore(day('2026-01-10'), 2)).toBe('2025-11-10');
   });
 });

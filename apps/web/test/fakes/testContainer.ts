@@ -6,6 +6,7 @@ import {
   InMemoryBackupRepository,
   InMemoryBodyMeasurementsRepository,
   InMemoryConsentRepository,
+  InMemoryExpiredDataPurger,
   InMemoryDayEntryRepository,
   InMemoryHabitLogRepository,
   InMemoryHabitRepository,
@@ -28,6 +29,7 @@ export interface TestApp {
   readonly backup: InMemoryBackupRepository;
   readonly eraser: InMemoryLocalDataEraser;
   readonly inventory: InMemoryStoredDataInventory;
+  readonly purger: InMemoryExpiredDataPurger;
 }
 
 /** The real use cases wired to in-memory repositories, for screen tests. */
@@ -49,6 +51,7 @@ export function createTestApp(isoDay = '2026-11-04', hour = 10): TestApp {
     backup: new InMemoryBackupRepository(),
     eraser: new InMemoryLocalDataEraser(),
     inventory: new InMemoryStoredDataInventory(),
+    purger: new InMemoryExpiredDataPurger(),
   };
   return { container: createUseCases(adapters), ...adapters };
 }

@@ -15,6 +15,7 @@ export interface LocalDateTime {
 const DAY_KEY_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
 const MONTH_OFFSET = 1;
 const ISO_DATE_LENGTH = 10;
+const MONTHS_PER_YEAR = 12;
 
 export function parseDayKey(input: string): Result<DayKey, DomainError> {
   const date = toUtcDate(input);
@@ -47,6 +48,17 @@ export function daysBefore(day: DayKey, count: number): DayKey[] {
     days.push(current);
   }
   return days;
+}
+
+/** Same day `months` earlier, or the last day of that month when it is shorter. */
+export function monthsBefore(day: DayKey, months: number): DayKey {
+  const [year, month, dayOfMonth] = day.split('-').map(Number) as [number, number, number];
+  const monthIndex = year * MONTHS_PER_YEAR + (month - MONTH_OFFSET) - months;
+  const targetYear = Math.floor(monthIndex / MONTHS_PER_YEAR);
+  const targetMonth = monthIndex - targetYear * MONTHS_PER_YEAR;
+  const lastDay = new Date(Date.UTC(targetYear, targetMonth + 1, 0)).getUTCDate();
+  const date = new Date(Date.UTC(targetYear, targetMonth, Math.min(dayOfMonth, lastDay)));
+  return formatUtcDate(date) as DayKey;
 }
 
 function toUtcDate(input: string): Date | null {

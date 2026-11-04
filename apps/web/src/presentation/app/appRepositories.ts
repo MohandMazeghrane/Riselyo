@@ -4,6 +4,7 @@ import type {
 } from '../../domain/ports/checkInRepositories';
 import type { BackupRepository } from '../../domain/ports/backupRepository';
 import type { Clock } from '../../domain/ports/clock';
+import type { ExpiredDataPurger } from '../../domain/ports/expiredDataPurger';
 import type { LocalDataEraser } from '../../domain/ports/localDataEraser';
 import type { StoredDataInventory } from '../../domain/ports/storedDataInventory';
 import type { ConsentRepository } from '../../domain/ports/consentRepository';
@@ -27,4 +28,5 @@ export interface AppAdapters {
   readonly backup: BackupRepository;
   readonly eraser: LocalDataEraser;
   readonly inventory: StoredDataInventory;
+  readonly purger: ExpiredDataPurger;
 }

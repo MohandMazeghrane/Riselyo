@@ -7,7 +7,9 @@ import type {
 import { defaultConsents, type ConsentSet } from '../../src/domain/entities/consent';
 import type { BackupRepository } from '../../src/domain/ports/backupRepository';
 import type { ConsentRepository } from '../../src/domain/ports/consentRepository';
+import type { ExpiredDataPurger, PurgeReport } from '../../src/domain/ports/expiredDataPurger';
 import type { LocalDataEraser } from '../../src/domain/ports/localDataEraser';
+import type { RetentionCutoffs } from '../../src/domain/privacy/retention';
 import type {
   StoredDataCounts,
   StoredDataInventory,
@@ -219,5 +221,16 @@ export class InMemoryStoredDataInventory extends FakeStore implements StoredData
 
   count(): Promise<Result<StoredDataCounts, DomainError>> {
     return this.attempt(() => this.counts);
+  }
+}
+
+export class InMemoryExpiredDataPurger extends FakeStore implements ExpiredDataPurger {
+  readonly received: RetentionCutoffs[] = [];
+
+  purge(cutoffs: RetentionCutoffs): Promise<Result<PurgeReport, DomainError>> {
+    return this.attempt(() => {
+      this.received.push(cutoffs);
+      return { journal: 0, conversations: 0, messages: 0, aiUsage: 0 };
+    });
   }
 }
