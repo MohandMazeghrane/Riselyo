@@ -2,11 +2,14 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import { readGlobalSecurityHeaders } from './build/securityHeaders';
 
 const BRAND_BLUE = '#2563eb';
 const BACKGROUND = '#f8fafc';
 
 export default defineConfig({
+  // The preview server mirrors the production headers so CSP issues show up before deploying.
+  preview: { headers: readGlobalSecurityHeaders() },
   plugins: [
     react(),
     tailwindcss(),
