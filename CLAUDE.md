@@ -11,7 +11,7 @@
 
 | Phase | Statut | Avancement | Critère de passage |
 | --- | --- | --- | --- |
-| 1 — Socle et suivi de base | 🚧 En cours | 10 / 16 | 7 jours d'usage réel sans bug bloquant |
+| 1 — Socle et suivi de base | 🚧 En cours | 11 / 16 | 7 jours d'usage réel sans bug bloquant |
 | 2 — Coach IA et Apple Santé | 🔒 Bloquée | 0 / 13 | Coach jugé utile, coût réel < 1 € sur 2 semaines, import Santé fiable 7 jours |
 | 3 — Moteur et bilans | 🔒 Bloquée | 0 / 8 | 3 bilans hebdo d'affilée sans chiffre faux |
 | 4 — Finitions | 🔒 Bloquée | 0 / 9 | Lighthouse PWA ≥ 90, audit sécurité et RGPD (sections 11 et 12) validé |
@@ -22,8 +22,8 @@ Le détail des tâches (cases à cocher) est en **section 16**. Les compteurs ci
 ### En ce moment
 
 - **Phase en cours** : 1
-- **Tâche en cours** : — (1.1 à 1.10 terminées)
-- **Prochaine tâche** : 1.11 — Filet de sécurité complet (`domain/safety`, `HelpBanner`, page « Besoin d'aide » alignée sur `PageLayout`) ; section 10 de ce fichier et section 9 du cahier
+- **Tâche en cours** : — (1.1 à 1.11 terminées)
+- **Prochaine tâche** : 1.12 — Export JSON / CSV et import validé par Zod (section 12 : droit d'accès et portabilité) ; Zod est une nouvelle dépendance à valider
 - **Bloquants / questions ouvertes** :
   - L'installation sur iPhone ne sera testable qu'après le déploiement (1.16) : il faut une URL en HTTPS.
   - « Maquette v1 » citée par le cahier des charges absente du dépôt : l'écran Aujourd'hui (1.10) a été fait sans elle ; à ajouter dans `docs/` si disponible pour un ajustement visuel.
@@ -57,7 +57,9 @@ _Format : `- [date] description — impact — piste de correction`._
 - [2026-11-04] Après une mise à jour, la page déjà ouverte garde l'ancienne version jusqu'au prochain chargement (pas de rechargement automatique ni de message « nouvelle version ») — acceptable pour un seul utilisateur ; envisager un message en 4.9.
 - [2026-11-04] Le palier « Pas d'alcool : semaine sans » se coche à la main ; le calculer à partir des 7 derniers jours viendra avec le moteur (3.1 / 3.6).
 - [2026-11-04] `HabitRepository` dans `onboardingRepositories.ts` et `HabitLogRepository` dans `checkInRepositories.ts` : ports rangés par tâche d'origine — les regrouper dans `ports/habitRepositories.ts` lors d'un prochain passage.
-- [2026-11-04] `HelpScreen` garde sa propre mise en page au lieu de `PageLayout` — doublon mineur — l'aligner quand on y touchera (1.11).
+- [2026-11-04] Détection de détresse : liste d'expressions dans `domain/safety/distressPhrases.ts`, une faute tolérée sur 6 mots-clés ; les négations (« je n'ai pas envie de mourir ») et quelques hyperboles (« ce sport va me tuer ») affichent aussi le bandeau, volontairement — enrichir la liste avec l'usage réel, sans jamais retirer une expression sans test.
+- [2026-11-04] La détection ne couvre que les 3 champs libres actuels (pourquoi, priorité libre, victoire) — le coach (2.6) et le journal (4.4) devront appeler `textNeedsHelp` **avant** tout envoi à l'IA et afficher `HelpBanner` en premier.
+- [2026-11-04] La carte « On pense à toi » ne peut pas être masquée et disparaît d'elle-même quand la semaine va mieux ; si la lecture des journées échoue, elle n'est pas affichée (les numéros restent dans Profil) — à revoir si elle pèse à l'usage.
 
 ### Journal des sessions
 
@@ -70,6 +72,7 @@ _Format : `- [date] description — impact — piste de correction`._
 | 2026-11-04 | 1.5 : schéma Dexie v1 (17 tables, v1 figée par un test), harnais de migration (`upToVersion`), entité `Consent` (refus par défaut, `aiJournal` dépend de `ai`), `DexieConsentRepository` | 64 tests, couverture domaine + application 100 % | `29528b0`, `bea2426`, `9960e10` | Rien (pas encore d'écran qui écrit en base) |
 | 2026-11-04 | Cahier des charges ajouté (`docs/`) ; couleur alignée sur #2563B8 ; 1.6 : onboarding partie A (A0 à A5) — domaine en TDD, 8 cas d'usage, schéma v2 (`lifeWheels`) + migration testée, 4 repositories, React Router 7, écrans + page « Besoin d'aide » ; règle ESLint « présentation → domaine : types seulement » | 175 tests, couverture domaine + application 99,5 % ; parcours complet vérifié dans le navigateur à 375 et 320 px, reprise après rechargement, données relues dans IndexedDB | `bb04e2d` … `160c19a` | Après le déploiement (1.16) : faire l'onboarding complet, quitter l'app en cours de route et vérifier la reprise, tester les liens 3114 / 15 / 112 |
 | 2026-11-04 | 1.7 : écran A6 (7e étape de l'onboarding, tout désactivé par défaut, journal verrouillé sans IA), Profil minimal, Profil → Confidentialité (enregistrement immédiat, date affichée, révocation en cascade) ; conteneur construit par `createUseCases` | 201 tests ; vérifié dans le navigateur à 375 et 320 px (utilisateur existant renvoyé sur A6, dates, révocation) | `4c63023`, `8dcc81b` | Après le déploiement (1.16) : valider l'écran A6, puis changer un choix dans Profil → Confidentialité et vérifier la date |
+| 2026-11-04 | 1.11 : `domain/safety` (détection locale de détresse : accents, apostrophes, lettres répétées, « jveux », une faute tolérée ; signal humeur basse / stress haut sur 7 jours), `HelpBanner` sous les 3 champs libres, carte « On pense à toi » sur l'accueil, page « Besoin d'aide » sur `PageLayout`, mention « pas un professionnel de santé » dans Profil | 385 tests, couverture domaine + application 99,5 % ; vérifié dans le navigateur (bandeau en tapant avec fautes, carte après 4 soirs d'humeur basse) ; page d'aide hors ligne à 320 px sur le build, serveur coupé | `55cb281` … `ea9a203` | Après le déploiement (1.16) : taper une phrase test dans la victoire du soir et vérifier le bandeau, toucher « Appeler le 3114 » pour vérifier que le téléphone propose l'appel (sans appeler), ouvrir la page d'aide en mode avion |
 | 2026-11-04 | 1.10 : barre des 5 onglets (icônes en trait), pages « Bientôt disponible » pour Coach / Progrès / Bilans, retour à l'onboarding pour tous les onglets, priorité du jour (et si elle a été tenue) sur l'accueil, Profil devenu un onglet ; correctif PWA : la mise à jour du service worker restait en attente tant que l'app n'était pas fermée | 331 tests ; vérifié dans le navigateur à 375 et 320 px (rien de caché sous la barre, pas de défilement horizontal, aucune erreur console), mise à jour du service worker et onglet Bilans hors ligne vérifiés sur le build (serveur coupé) | `f912003`, `7c302a0` | Après le déploiement (1.16) : naviguer entre les 5 onglets d'une main, vérifier que la barre ne gêne pas la zone du bas de l'iPhone, puis après un 2e déploiement vérifier que la nouvelle version arrive en rouvrant l'app |
 | 2026-11-04 | 1.9 : habitudes à réduire (grignotage, alcool, réseaux le soir, tabac) avec jours sans ; toucher une habitude sur l'accueil pour noter le palier du jour ; 5 boutons rapides avec annulation ; Profil → Mes habitudes (palier visé, arrêt confirmé, ajout si les habitudes tiennent à 70 %) ; eau et marche pré-remplies au check-in du soir | 323 tests, couverture domaine + application 99,4 % ; vérifié dans le navigateur à 375 et 320 px (données relues dans IndexedDB, aucune erreur console) | `db0ec29` … `bac9450` | Après le déploiement (1.16) : toucher les habitudes et les boutons rapides pendant une vraie journée, vérifier le pré-remplissage du soir, arrêter puis rajouter une habitude |
 | 2026-11-04 | 1.8 : check-ins du matin (coucher/réveil pré-remplis par le rythme, sommeil, énergie, priorité) et du soir (humeur en visages, stress, habitudes du jour, priorité tenue, victoire) ; `DayEntry`, `HabitLog`, repositories Dexie (pas de migration) ; cartes « À faire / Fait » sur l'accueil | 245 tests, couverture domaine + application 99 % ; vérifié dans le navigateur à 375 et 320 px (données relues dans IndexedDB, réponses reprises en rouvrant) | `aad0b8d` … `edcacde` | Après le déploiement (1.16) : faire les deux check-ins d'une vraie journée, chronométrer (objectif < 60 s), refaire un check-in après minuit pour vérifier qu'il compte pour la veille |
@@ -591,7 +594,7 @@ Chaque phase se termine par une app **utilisable et déployée**. Cocher les cas
 - [x] 1.8 Check-ins matin et soir en boutons
 - [x] 1.9 Habitudes à 3 paliers + boutons rapides
 - [x] 1.10 Écran Aujourd'hui
-- [ ] 1.11 Filet de sécurité complet (`domain/safety`, `HelpBanner`, page « Besoin d'aide »)
+- [x] 1.11 Filet de sécurité complet (`domain/safety`, `HelpBanner`, page « Besoin d'aide »)
 - [ ] 1.12 Export JSON / CSV et import validé par Zod
 - [ ] 1.13 « Tout supprimer » (partie locale)
 - [ ] 1.14 Écran « Mes données » + `docs/rgpd.md` + `docs/securite.md`
@@ -728,6 +731,9 @@ Une tâche n'est terminée que si :
 | 2026-11-04 | Barre des 5 onglets dès la 1.10 ; Coach, Progrès et Bilans ouvrent une page « Bientôt disponible » qui dit ce qu'ils contiendront | Choix de l'utilisateur : navigation définitive tout de suite, jamais de page vide |
 | 2026-11-04 | L'accueil n'affiche que des données réelles : pas d'anneau du score, de niveau, de série ni de focus avant les tâches qui les calculent ; pas de bouton « Jour difficile » avant la 2.9 | Choix de l'utilisateur ; l'app n'invente jamais un chiffre et aucun bouton ne mène à une page vide |
 | 2026-11-04 | Garde de l'onboarding déplacée dans `TabLayout` (route parente des 5 onglets) ; la barre n'est pas affichée sur l'onboarding, les check-ins et les sous-pages | Un seul endroit pour la règle ; les écrans ponctuels gardent toute la hauteur |
+| 2026-11-04 | Détection de détresse branchée dès maintenant sur les 3 champs libres (pourquoi, priorité libre, victoire) ; le bandeau s'affiche en tapant et n'empêche jamais d'enregistrer | Choix de l'utilisateur ; le coach et le journal réutiliseront la même détection |
+| 2026-11-04 | Carte bienveillante : humeur ≤ 2 à chaque soir renseigné des 7 derniers jours (au moins 4 soirs), ou stress à 5 au moins 3 soirs sur 7 ; un jour non renseigné ne déclenche rien | Choix de l'utilisateur ; constantes dans `domain/config/safety.ts` |
+| 2026-11-04 | Détection par liste d'expressions normalisées + distance d'édition ≤ 1 sur les mots-clés longs, sans dépendance ; la liste penche vers trop détecter plutôt que pas assez | Hors ligne, sans IA (section 10) ; une fausse alerte ne fait qu'afficher des numéros d'aide |
 | 2026-11-04 | Workbox `skipWaiting` + `clientsClaim` | Le script d'enregistrement n'envoie pas `SKIP_WAITING` : sans cela une mise à jour attendait la fermeture complète de l'app |
 | 2026-11-04 | L'eau et la marche des boutons rapides pré-remplissent le palier du soir (4/6/8 verres, 10/30/60 min) sans l'enregistrer d'office | L'utilisateur valide toujours ; aucune réponse inventée |
 
