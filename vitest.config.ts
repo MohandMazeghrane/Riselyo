@@ -1,13 +1,32 @@
 import { defineConfig } from 'vitest/config';
 
+const PRESENTATION_TESTS = 'apps/web/src/presentation/**/*.test.{ts,tsx}';
+
 export default defineConfig({
   test: {
-    include: [
-      'apps/*/src/**/*.test.{ts,tsx}',
-      'apps/*/test/**/*.test.{ts,tsx}',
-      'packages/*/src/**/*.test.ts',
-    ],
     passWithNoTests: true,
+    projects: [
+      {
+        test: {
+          name: 'logic',
+          environment: 'node',
+          include: [
+            'apps/*/src/**/*.test.{ts,tsx}',
+            'apps/*/test/**/*.test.{ts,tsx}',
+            'packages/*/src/**/*.test.ts',
+          ],
+          exclude: [PRESENTATION_TESTS],
+        },
+      },
+      {
+        test: {
+          name: 'ui',
+          environment: 'jsdom',
+          include: [PRESENTATION_TESTS],
+          setupFiles: ['apps/web/test/setupDom.ts'],
+        },
+      },
+    ],
     coverage: {
       provider: 'v8',
       include: ['apps/web/src/domain/**', 'apps/web/src/application/**'],
