@@ -113,3 +113,34 @@ describe('Profile → Mes données', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('version plus récente de Riselyo');
   });
 });
+
+describe('Profile → Mes données → transparency', () => {
+  it('counts what is stored on the phone and says where data goes', async () => {
+    const testApp = readyApp();
+    testApp.inventory.counts = {
+      ...testApp.inventory.counts,
+      profile: 1,
+      days: 12,
+      habits: 1,
+      measurements: 0,
+    };
+    renderApp('/profil/donnees', testApp);
+
+    expect(
+      await screen.findByText('12 journées (check-ins et boutons rapides)'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('1 habitude suivie ou arrêtée')).toBeInTheDocument();
+    expect(screen.getByText('0 relevé de mesures, jamais envoyé à l’IA')).toBeInTheDocument();
+    expect(screen.getByText('Ton profil : prénom, « pourquoi », rythme')).toBeInTheDocument();
+    expect(screen.getByText('OpenAI (États-Unis)')).toBeInTheDocument();
+    expect(screen.getByText(/Rien n’est envoyé sur Internet/)).toBeInTheDocument();
+  });
+
+  it('offers to retry when the data cannot be counted', async () => {
+    const testApp = readyApp();
+    testApp.inventory.failing = true;
+    renderApp('/profil/donnees', testApp);
+
+    expect(await screen.findByRole('button', { name: 'Réessayer' })).toBeInTheDocument();
+  });
+});

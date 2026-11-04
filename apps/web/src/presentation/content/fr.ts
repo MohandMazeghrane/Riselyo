@@ -1,3 +1,8 @@
+/** French plural: 0 and 1 take the singular. */
+function plural(count: number, singular: string, pluralForm: string): string {
+  return `${String(count)} ${count <= 1 ? singular : pluralForm}`;
+}
+
 export const fr = {
   appName: 'Riselyo',
   common: {
@@ -54,10 +59,49 @@ export const fr = {
     habits: 'Mes habitudes',
     habitsHint: 'Paliers, ajouts et pauses',
     myData: 'Mes données',
-    myDataHint: 'Exporter, sauvegarder, restaurer',
+    myDataHint: 'Ce qui est gardé, exporter, tout supprimer',
   },
   myData: {
     title: 'Mes données',
+    storedTitle: 'Ce que Riselyo garde',
+    storedIntro:
+      'Aujourd’hui, tout reste sur ton téléphone, jusqu’à ce que tu le supprimes. Rien n’est envoyé sur Internet.',
+    stored: {
+      profile: (count: number): string =>
+        count === 0 ? 'Pas encore de profil' : 'Ton profil : prénom, « pourquoi », rythme',
+      consents: (count: number): string =>
+        plural(count, 'choix de confidentialité', 'choix de confidentialité'),
+      days: (count: number): string =>
+        `${plural(count, 'journée', 'journées')} (check-ins et boutons rapides)`,
+      habits: (count: number): string =>
+        plural(count, 'habitude suivie ou arrêtée', 'habitudes suivies ou arrêtées'),
+      habitLogs: (count: number): string => plural(count, 'palier noté', 'paliers notés'),
+      measurements: (count: number): string =>
+        plural(
+          count,
+          'relevé de mesures, jamais envoyé à l’IA',
+          'relevés de mesures, jamais envoyés à l’IA',
+        ),
+      lifeWheels: (count: number): string => plural(count, 'roue de vie', 'roues de vie'),
+    },
+    whereTitle: 'Où vont tes données',
+    places: [
+      {
+        name: 'Ton téléphone',
+        detail: 'Tout ce qui est listé ci-dessus, tant que tu le souhaites.',
+      },
+      {
+        name: 'Serveur Riselyo (Cloudflare, États-Unis)',
+        detail:
+          'Rien aujourd’hui. Plus tard, seulement si tu actives les notifications ou Apple Santé : des données chiffrées, gardées 7 jours au plus.',
+      },
+      {
+        name: 'OpenAI (États-Unis)',
+        detail:
+          'Rien aujourd’hui. Plus tard, seulement si tu actives le coach IA : ton prénom et des résumés chiffrés, jamais tes notes brutes, photos ou mesures.',
+      },
+    ],
+    noTracking: 'Aucune publicité, aucun traqueur, aucune statistique envoyée à qui que ce soit.',
     exportTitle: 'Exporter',
     exportIntro: 'Tout ce que Riselyo garde sur ton téléphone, à télécharger quand tu veux.',
     exportBackup: 'Télécharger la sauvegarde complète (JSON)',

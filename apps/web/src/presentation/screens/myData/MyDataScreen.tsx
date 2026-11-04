@@ -5,11 +5,13 @@ import { fr } from '../../content/fr';
 import { EraseSection } from './EraseSection';
 import { ExportSection } from './ExportSection';
 import { ImportSection } from './ImportSection';
+import { StoredDataSection } from './StoredDataSection';
 
-/** Profile → my data: access and portability (CLAUDE.md, section 12). Works offline. */
+/** Profile → my data: transparency, access, portability and erasure (CLAUDE.md, section 12). */
 export function MyDataScreen(): ReactNode {
   return (
     <PageLayout title={fr.myData.title} backTo={ROUTES.profile}>
+      <StoredDataSection />
       <ExportSection />
       <ImportSection />
       <EraseSection />
