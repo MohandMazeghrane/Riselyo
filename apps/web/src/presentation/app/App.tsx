@@ -8,6 +8,8 @@ import { MeasurementsScreen } from '../screens/onboarding/MeasurementsScreen';
 import { RhythmScreen } from '../screens/onboarding/RhythmScreen';
 import { WelcomeScreen } from '../screens/onboarding/WelcomeScreen';
 import { WhyScreen } from '../screens/onboarding/WhyScreen';
+import { EveningCheckInScreen } from '../screens/checkin/EveningCheckInScreen';
+import { MorningCheckInScreen } from '../screens/checkin/MorningCheckInScreen';
 import { ConsentsScreen } from '../screens/onboarding/ConsentsScreen';
 import { PrivacyScreen } from '../screens/privacy/PrivacyScreen';
 import { ProfileScreen } from '../screens/profile/ProfileScreen';
@@ -29,6 +31,8 @@ export function App(): ReactNode {
       <Route path={ROUTES.consents} element={<ConsentsScreen />} />
       <Route path={ROUTES.profile} element={<ProfileScreen />} />
       <Route path={ROUTES.privacy} element={<PrivacyScreen />} />
+      <Route path={ROUTES.morningCheckIn} element={<MorningCheckInScreen />} />
+      <Route path={ROUTES.eveningCheckIn} element={<EveningCheckInScreen />} />
       <Route path="*" element={<Navigate to={ROUTES.today} replace />} />
     </Routes>
   );

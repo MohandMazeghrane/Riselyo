@@ -5,6 +5,7 @@ import { LoadState } from '../../components/LoadState';
 import { fr } from '../../content/fr';
 import { useCurrentDayLabel } from '../../hooks/useCurrentDayLabel';
 import { useOnboardingStatus } from '../../hooks/useOnboardingStatus';
+import { CheckInCards } from './CheckInCards';
 
 /** Home. Until the onboarding is finished, it sends the user back where they left it. */
 export function TodayScreen(): ReactNode {
@@ -36,10 +37,8 @@ function TodayContent({ firstName }: { readonly firstName: string }): ReactNode 
         <h1 className="mt-1 text-3xl font-bold">{fr.home.greeting(firstName)}</h1>
         <p className="mt-1 text-slate-600 first-letter:uppercase">{dayLabel}</p>
       </header>
-      <section className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
-        <p>{fr.home.upcoming}</p>
-        <p className="mt-2 text-sm text-slate-600">{fr.home.offlineReady}</p>
-      </section>
+      <CheckInCards />
+      <p className="text-sm text-slate-600">{fr.home.offlineReady}</p>
     </main>
   );
 }

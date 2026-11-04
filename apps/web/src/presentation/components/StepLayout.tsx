@@ -4,13 +4,14 @@ import { ONBOARDING_SCREEN_COUNT } from '../app/routes';
 import { fr } from '../content/fr';
 
 interface StepLayoutProps {
-  readonly step: number;
+  /** Onboarding progress; omitted on one-off screens such as the check-ins. */
+  readonly step?: number;
   readonly title: string;
   readonly backTo?: string;
   readonly children: ReactNode;
 }
 
-/** Frame of an onboarding screen: progress, optional back link, title and content. */
+/** Frame of a form screen: optional progress and back link, title and content. */
 export function StepLayout({ step, title, backTo, children }: StepLayoutProps): ReactNode {
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-5 px-5 pt-[max(env(safe-area-inset-top),1.5rem)] pb-[max(env(safe-area-inset-bottom),1.5rem)]">
@@ -22,7 +23,7 @@ export function StepLayout({ step, title, backTo, children }: StepLayoutProps): 
             {fr.common.back}
           </Link>
         )}
-        <span>{fr.common.step(step, ONBOARDING_SCREEN_COUNT)}</span>
+        {step !== undefined && <span>{fr.common.step(step, ONBOARDING_SCREEN_COUNT)}</span>}
       </div>
       <h1 className="text-2xl font-bold">{title}</h1>
       {children}

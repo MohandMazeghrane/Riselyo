@@ -7,7 +7,7 @@ import { FormMessage } from './FormMessage';
 import { StepLayout } from './StepLayout';
 
 interface StepFormProps {
-  readonly step: number;
+  readonly step?: number;
   readonly title: string;
   readonly backTo?: string;
   readonly onSubmit: () => void;
@@ -31,8 +31,12 @@ export function StepForm(props: StepFormProps): ReactNode {
     event.preventDefault();
     onSubmit();
   };
+  const optional = {
+    ...(step === undefined ? {} : { step }),
+    ...(backTo === undefined ? {} : { backTo }),
+  };
   return (
-    <StepLayout step={step} title={title} {...(backTo === undefined ? {} : { backTo })}>
+    <StepLayout title={title} {...optional}>
       <form onSubmit={handleSubmit} noValidate className="flex flex-1 flex-col gap-5">
         {children}
         <SubmitError {...props} />

@@ -6,6 +6,8 @@ export const ROUTES = {
   help: '/aide',
   profile: '/profil',
   privacy: '/profil/confidentialite',
+  morningCheckIn: '/check-in/matin',
+  eveningCheckIn: '/check-in/soir',
   welcome: '/demarrage',
   lifeWheel: '/demarrage/roue-de-vie',
   lifeWheelResult: '/demarrage/point-de-depart',
