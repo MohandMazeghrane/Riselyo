@@ -11,7 +11,7 @@
 
 | Phase | Statut | Avancement | Critère de passage |
 | --- | --- | --- | --- |
-| 1 — Socle et suivi de base | ⏳ À démarrer | 0 / 16 | 7 jours d'usage réel sans bug bloquant |
+| 1 — Socle et suivi de base | 🚧 En cours | 2 / 16 | 7 jours d'usage réel sans bug bloquant |
 | 2 — Coach IA et Apple Santé | 🔒 Bloquée | 0 / 13 | Coach jugé utile, coût réel < 1 € sur 2 semaines, import Santé fiable 7 jours |
 | 3 — Moteur et bilans | 🔒 Bloquée | 0 / 8 | 3 bilans hebdo d'affilée sans chiffre faux |
 | 4 — Finitions | 🔒 Bloquée | 0 / 9 | Lighthouse PWA ≥ 90, audit sécurité et RGPD (sections 11 et 12) validé |
@@ -22,19 +22,27 @@ Le détail des tâches (cases à cocher) est en **section 16**. Les compteurs ci
 ### En ce moment
 
 - **Phase en cours** : 1
-- **Tâche en cours** : —
-- **Prochaine tâche** : 1.1 — Initialiser le monorepo (TypeScript strict, ESLint, Prettier, Vitest, CI)
-- **Bloquants / questions ouvertes** : aucun
+- **Tâche en cours** : — (1.1 et 1.2 terminées)
+- **Prochaine tâche** : 1.3 — PWA installable (Vite, React, Tailwind, `vite-plugin-pwa`, polices auto-hébergées)
+- **Bloquants / questions ouvertes** :
+  - Créer le dépôt GitHub distant et y pousser `main` pour activer la CI et Dependabot.
+  - Pour 1.3 : choix de la police et icône de l'app (sinon icône bleue provisoire).
+  - Pour 1.4 : choisir le scanner de secrets (`secretlint` ou `gitleaks`).
 
 ### Dette technique et problèmes connus
 
-_Aucun pour l'instant. Format : `- [date] description — impact — piste de correction`._
+_Format : `- [date] description — impact — piste de correction`._
+
+- [2026-11-04] TypeScript bloqué en 6.0 — typescript-eslint 8 ne supporte pas TS 7 — passer à TS 7 dès que typescript-eslint le supporte.
+- [2026-11-04] `overrides.minimatch ^11.0.4` dans `package.json` — corrige une vulnérabilité modérée transitive d'ESLint (outillage de dev) — retirer quand ESLint embarquera minimatch ≥ 11.
+- [2026-11-04] `apps/worker` et `packages/shared` pas encore créés — aucun code à y mettre en phase 1 — les créer en 2.1 (les workspaces `apps/*` et `packages/*` sont déjà déclarés).
+- [2026-11-04] Le premier commit (`chore`) seul ne passe pas `typecheck` (`apps/web` vide) — aucun impact, corrigé par les deux commits suivants.
 
 ### Journal des sessions
 
 | Date | Tâches faites | Tests | Commit(s) | Reste à tester sur le téléphone |
 | --- | --- | --- | --- | --- |
-| — | — | — | — | — |
+| 2026-11-04 | 1.1 monorepo et outillage ; 1.2 squelette Clean Architecture (`Result`, `DomainError`, `DayKey`, port `Clock`, `SystemClock`, `FakeClock`, `getCurrentDay`, `container.ts`, test des frontières) | 32 tests, couverture domaine + application 100 % | `c9cb27b`, `b4dc70c`, `498e901` | Rien (pas encore d'interface) |
 
 ---
 
@@ -542,8 +550,8 @@ Chaque phase se termine par une app **utilisable et déployée**. Cocher les cas
 
 ### Phase 1 — Socle et suivi de base (semaines 1-2)
 
-- [ ] 1.1 Monorepo, TypeScript strict, ESLint (+ frontières d'architecture), Prettier, Vitest, CI GitHub Actions
-- [ ] 1.2 Squelette Clean Architecture : couches, ports, `container.ts`, `Result`, `Clock`
+- [x] 1.1 Monorepo, TypeScript strict, ESLint (+ frontières d'architecture), Prettier, Vitest, CI GitHub Actions
+- [x] 1.2 Squelette Clean Architecture : couches, ports, `container.ts`, `Result`, `Clock`
 - [ ] 1.3 PWA installable (manifest, icônes, service worker, hors ligne), polices auto-hébergées
 - [ ] 1.4 En-têtes de sécurité (`_headers`, CSP) et scan de secrets en pré-commit
 - [ ] 1.5 Schéma Dexie v1 + repositories + tests de migration
@@ -647,5 +655,11 @@ Une tâche n'est terminée que si :
 | 2026-11-04 | Polices auto-hébergées, aucun tiers chargé par le front | Vie privée et CSP stricte |
 | 2026-11-04 | Nom de l'app : **Riselyo** (remplace « Reprise ») | Nom qui sonne « app », domaine riselyo.com libre à la vérification |
 | 2026-11-04 | Couleur principale : bleu (maquette v1 recolorée) | Préférence de l'utilisateur ; orange réservé aux points « à éviter » |
+| 2026-11-04 | TypeScript 6.0, ESLint 10 (config « flat »), Vitest 5, Node 24 | Dernières versions compatibles entre elles (typescript-eslint exige TS < 6.1) |
+| 2026-11-04 | Dépendances de dev d'outillage : `@eslint/js`, `typescript-eslint`, `eslint-config-prettier`, `globals`, `@vitest/coverage-v8`, `@types/node` | Nécessaires à ESLint, Prettier et à la mesure de couverture exigée section 14 |
+| 2026-11-04 | Isolation du domaine et de l'application par ESLint natif (`no-restricted-imports/globals/syntax`) en plus de `eslint-plugin-boundaries` | Interdit bibliothèques externes, `fetch` et `Date.now()` sans dépendance supplémentaire ; vérifié par `apps/web/test/architecture.test.ts` |
+| 2026-11-04 | `SystemClock` via `Intl.DateTimeFormat` (fuseau Europe/Paris), pas date-fns | Aucune dépendance pour l'heure locale ; date-fns reste prévu pour l'affichage |
+| 2026-11-04 | `LocalDateTime` + `dayKeyOf` dans le domaine ; bascule de journée à 4 h (`DAY_ROLLOVER_HOUR`) | Règle métier « une journée se termine à 4 h » testée dans le domaine, le port `Clock` ne fournit que l'heure murale |
+| 2026-11-04 | Faux adaptateurs de test dans `apps/web/test/fakes/` | Hors de `src/` : jamais embarqués dans le build |
 
 > Ajouter une ligne à chaque décision structurante.
