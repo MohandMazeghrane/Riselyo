@@ -185,6 +185,19 @@ export const fr = {
       },
     ],
     call: (number: string): string => `Appeler le ${number}`,
+    bannerTitle: 'Tu peux en parler maintenant',
+    bannerText:
+      'Ce que tu viens d’écrire a l’air lourd. Des personnes sont là pour t’écouter, gratuitement, à toute heure.',
+    bannerPrivacy: 'Ce que tu écris reste sur ton téléphone.',
+  },
+  wellbeing: {
+    title: 'On pense à toi',
+    low_mood:
+      'Ton humeur est basse depuis plusieurs jours. En parler à un proche ou à ton médecin peut vraiment aider.',
+    high_stress:
+      'Ton stress est très haut plusieurs soirs cette semaine. En parler à un proche ou à ton médecin peut vraiment aider.',
+    help: 'Si c’est trop lourd, le 3114 écoute 24 h/24.',
+    link: 'Voir les numéros d’aide',
   },
   welcome: {
     title: 'Bienvenue sur Riselyo',

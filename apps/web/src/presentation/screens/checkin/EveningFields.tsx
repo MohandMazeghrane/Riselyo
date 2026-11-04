@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { CHECK_IN_FORM, type EveningForm } from '../../../application/checkin/checkInForm';
 import type { CheckInDay } from '../../../application/checkin/getCheckInDay';
 import { ChoiceGroup, type Choice } from '../../components/ChoiceGroup';
+import { HelpBannerFor } from '../../components/HelpBannerFor';
 import { MoodFace } from '../../components/MoodFace';
 import { TextField } from '../../components/TextField';
 import { fr } from '../../content/fr';
@@ -49,6 +50,7 @@ export function EveningFields(props: EveningFieldsProps): ReactNode {
           update({ victory: event.target.value });
         }}
       />
+      <HelpBannerFor text={form.victory} />
     </>
   );
 }

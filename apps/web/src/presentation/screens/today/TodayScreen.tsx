@@ -5,6 +5,7 @@ import { useCurrentDayLabel } from '../../hooks/useCurrentDayLabel';
 import { useOnboardingStatus } from '../../hooks/useOnboardingStatus';
 import { DayCheckIns } from './DayCheckIns';
 import { TodayHabitsSection } from './TodayHabitsSection';
+import { WellbeingCard } from './WellbeingCard';
 
 /** The "Aujourd'hui" tab. Score, level, streak and focus appear with the tasks that compute them. */
 export function TodayScreen(): ReactNode {
@@ -24,6 +25,7 @@ function TodayContent({ firstName }: { readonly firstName: string }): ReactNode 
         <h1 className="mt-1 text-3xl font-bold">{fr.home.greeting(firstName)}</h1>
         <p className="mt-1 text-slate-600 first-letter:uppercase">{dayLabel}</p>
       </header>
+      <WellbeingCard />
       <DayCheckIns />
       <TodayHabitsSection />
       <p className="text-sm text-slate-600">{fr.home.offlineReady}</p>

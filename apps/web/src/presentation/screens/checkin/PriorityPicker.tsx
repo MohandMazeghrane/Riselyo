@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react';
 import { CHECK_IN_FORM } from '../../../application/checkin/checkInForm';
 import type { DailyPriority } from '../../../domain/entities/dayEntry';
 import type { Habit } from '../../../domain/entities/habit';
+import { HelpBannerFor } from '../../components/HelpBannerFor';
 import { TextField } from '../../components/TextField';
 import { fr } from '../../content/fr';
 import { habitLabel } from '../../content/habitTexts';
@@ -44,6 +45,7 @@ export function PriorityPicker({ habits, value, onChange }: PriorityPickerProps)
           }}
         />
       )}
+      {value?.kind === 'free' && <HelpBannerFor text={freeText} />}
     </fieldset>
   );
 }

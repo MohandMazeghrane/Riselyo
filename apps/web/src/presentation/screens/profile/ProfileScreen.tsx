@@ -27,6 +27,7 @@ export function ProfileScreen(): ReactNode {
           </li>
         ))}
       </ul>
+      <p className="text-sm text-slate-600">{fr.common.notAProfessional}</p>
     </PageLayout>
   );
 }

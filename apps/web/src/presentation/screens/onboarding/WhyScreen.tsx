@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import { ONBOARDING_FORM } from '../../../application/onboarding/onboardingForm';
 import { useContainer } from '../../app/ContainerContext';
 import { ROUTES } from '../../app/routes';
+import { HelpBannerFor } from '../../components/HelpBannerFor';
 import { StepForm } from '../../components/StepForm';
 import { fr } from '../../content/fr';
 import { useSubmit } from '../../hooks/useSubmit';
@@ -66,6 +67,7 @@ function WhyField({ value, onChange }: WhyFieldProps): ReactNode {
         <span>{fr.why.hint}</span>
         <span>{fr.why.counter(value.length, ONBOARDING_FORM.whyMaxLength)}</span>
       </p>
+      <HelpBannerFor text={value} />
     </div>
   );
 }
