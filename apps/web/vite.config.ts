@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import { readGlobalSecurityHeaders } from './build/securityHeaders';
 
-const BRAND_BLUE = '#2563eb';
+const BRAND_BLUE = '#2563b8';
 const BACKGROUND = '#f8fafc';
 
 export default defineConfig({

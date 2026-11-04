@@ -4,7 +4,7 @@ import { writeFileSync } from 'node:fs';
 import { deflateSync } from 'node:zlib';
 
 const PUBLIC_DIR = new URL('../public/', import.meta.url);
-const BRAND_BLUE = [37, 99, 235];
+const BRAND_BLUE = [37, 99, 184];
 const WHITE = [255, 255, 255];
 const SUPERSAMPLING = 4;
 const MASKABLE_SAFE_ZONE = 0.8;
