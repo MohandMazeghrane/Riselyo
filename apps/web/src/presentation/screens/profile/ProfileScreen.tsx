@@ -10,10 +10,10 @@ const ENTRIES = [
   { to: ROUTES.help, label: fr.profile.help, hint: fr.profile.helpHint },
 ] as const;
 
-/** First version of the Profile tab; goals, settings and data come with later tasks. */
+/** The Profile tab; settings and data come with later tasks. */
 export function ProfileScreen(): ReactNode {
   return (
-    <PageLayout title={fr.profile.title} backTo={ROUTES.today}>
+    <PageLayout title={fr.profile.title} withTabBar>
       <ul className="flex flex-col gap-3">
         {ENTRIES.map((entry) => (
           <li key={entry.to}>

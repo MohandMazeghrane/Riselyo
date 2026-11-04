@@ -3,6 +3,9 @@ import type { OnboardingStep } from '../../domain/entities/onboarding';
 /** French paths; never any personal data in a URL (CLAUDE.md, section 11). */
 export const ROUTES = {
   today: '/',
+  coach: '/coach',
+  progress: '/progres',
+  reviews: '/bilans',
   help: '/aide',
   profile: '/profil',
   privacy: '/profil/confidentialite',

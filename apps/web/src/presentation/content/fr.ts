@@ -16,9 +16,34 @@ export const fr = {
   },
   home: {
     greeting: (firstName: string): string => `Bonjour ${firstName}`,
-    upcoming: 'Ton suivi du jour arrive très bientôt.',
     offlineReady: 'Riselyo fonctionne aussi sans connexion.',
+    priorityTitle: 'Ta priorité du jour',
+    priorityKept: 'Tenue',
+    priorityNotKept: 'Pas cette fois',
+  },
+  tabs: {
+    label: 'Navigation principale',
+    today: 'Aujourd’hui',
+    coach: 'Coach',
+    progress: 'Progrès',
+    reviews: 'Bilans',
     profile: 'Profil',
+  },
+  upcoming: {
+    badge: 'Bientôt disponible',
+    coach: {
+      title: 'Coach',
+      text: 'Ton coach pourra discuter avec toi, t’aider les jours difficiles et rédiger tes bilans. Il n’agira jamais sans ton accord.',
+    },
+    progress: {
+      title: 'Progrès',
+      text: 'Tu y verras la courbe de ton score, ton sommeil, ton humeur et tes habitudes au fil des semaines.',
+    },
+    reviews: {
+      title: 'Bilans',
+      text: 'Tous les 2-3 jours, chaque semaine et chaque mois : ce qui avance, ce qui est à éviter, ce qui est à pousser.',
+    },
+    meanwhile: 'En attendant, tout ton suivi continue sur l’onglet Aujourd’hui.',
   },
   profile: {
     title: 'Profil',

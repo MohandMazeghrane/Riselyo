@@ -15,12 +15,20 @@ import { ConsentsScreen } from '../screens/onboarding/ConsentsScreen';
 import { PrivacyScreen } from '../screens/privacy/PrivacyScreen';
 import { ProfileScreen } from '../screens/profile/ProfileScreen';
 import { TodayScreen } from '../screens/today/TodayScreen';
+import { UpcomingTabScreen } from '../screens/upcoming/UpcomingTabScreen';
 import { ROUTES } from './routes';
+import { TabLayout } from './TabLayout';
 
 export function App(): ReactNode {
   return (
     <Routes>
-      <Route path={ROUTES.today} element={<TodayScreen />} />
+      <Route element={<TabLayout />}>
+        <Route path={ROUTES.today} element={<TodayScreen />} />
+        <Route path={ROUTES.coach} element={<UpcomingTabScreen tab="coach" />} />
+        <Route path={ROUTES.progress} element={<UpcomingTabScreen tab="progress" />} />
+        <Route path={ROUTES.reviews} element={<UpcomingTabScreen tab="reviews" />} />
+        <Route path={ROUTES.profile} element={<ProfileScreen />} />
+      </Route>
       <Route path={ROUTES.help} element={<HelpScreen />} />
       <Route path={ROUTES.welcome} element={<WelcomeScreen />} />
       <Route path={ROUTES.lifeWheel} element={<LifeWheelScreen />} />
@@ -30,7 +38,6 @@ export function App(): ReactNode {
       <Route path={ROUTES.why} element={<WhyScreen />} />
       <Route path={ROUTES.goals} element={<GoalsScreen />} />
       <Route path={ROUTES.consents} element={<ConsentsScreen />} />
-      <Route path={ROUTES.profile} element={<ProfileScreen />} />
       <Route path={ROUTES.privacy} element={<PrivacyScreen />} />
       <Route path={ROUTES.habits} element={<HabitPlanScreen />} />
       <Route path={ROUTES.morningCheckIn} element={<MorningCheckInScreen />} />

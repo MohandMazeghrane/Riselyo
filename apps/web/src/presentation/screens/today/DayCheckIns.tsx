@@ -1,32 +1,71 @@
-import type { ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import { Link } from 'react-router';
+import type { DailyPriority } from '../../../domain/entities/dayEntry';
 import { useContainer } from '../../app/ContainerContext';
 import { ROUTES } from '../../app/routes';
 import { LoadState } from '../../components/LoadState';
 import { fr } from '../../content/fr';
 import { useAsyncData } from '../../hooks/useAsyncData';
+import { priorityLabel } from '../checkin/checkInDrafts';
 
-/** The two check-ins of the day, with what is already done. */
-export function CheckInCards(): ReactNode {
+/** The priority chosen this morning, then the two check-ins with what is already done. */
+export function DayCheckIns(): ReactNode {
   const day = useAsyncData(useContainer().checkIn.getDay);
   if (day.status !== 'ready') {
     return <LoadState status={day.status} onRetry={day.retry} />;
   }
   const { morning, evening } = day.data.entry;
+  const priority = morning?.priority ?? null;
+  return (
+    <>
+      {priority !== null && (
+        <PriorityCard priority={priority} kept={evening?.priorityKept ?? null} />
+      )}
+      <CheckInCardList morningDone={morning !== null} eveningDone={evening !== null} />
+    </>
+  );
+}
+
+interface PriorityCardProps {
+  readonly priority: DailyPriority;
+  readonly kept: boolean | null;
+}
+
+function PriorityCard({ priority, kept }: PriorityCardProps): ReactNode {
+  const titleId = useId();
+  return (
+    <section
+      aria-labelledby={titleId}
+      className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200"
+    >
+      <h2 id={titleId} className="text-sm font-medium text-slate-600">
+        {fr.home.priorityTitle}
+      </h2>
+      <p className="mt-1 text-lg font-semibold">{priorityLabel(priority)}</p>
+      {kept !== null && (
+        <p className="mt-1 text-sm text-brand-700">
+          {kept ? fr.home.priorityKept : fr.home.priorityNotKept}
+        </p>
+      )}
+    </section>
+  );
+}
+
+function CheckInCardList(props: { morningDone: boolean; eveningDone: boolean }): ReactNode {
   return (
     <ul className="grid grid-cols-2 gap-3">
       <li>
         <CheckInCard
           to={ROUTES.morningCheckIn}
           title={fr.checkIn.morningTitle}
-          done={morning !== null}
+          done={props.morningDone}
         />
       </li>
       <li>
         <CheckInCard
           to={ROUTES.eveningCheckIn}
           title={fr.checkIn.eveningTitle}
-          done={evening !== null}
+          done={props.eveningDone}
         />
       </li>
     </ul>
