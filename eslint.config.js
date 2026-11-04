@@ -99,7 +99,12 @@ export default tseslint.config(
             },
             {
               from: { element: { type: 'presentation' } },
-              allow: { to: { element: { types: ['domain', 'application', 'presentation'] } } },
+              allow: { to: { element: { types: ['application', 'presentation'] } } },
+            },
+            {
+              // Screens may name domain types, but logic reaches them through the application layer.
+              from: { element: { type: 'presentation' } },
+              allow: { to: { element: { type: 'domain' } }, dependency: { kind: 'type' } },
             },
             {
               from: { file: { path: '**/presentation/app/container.ts' } },

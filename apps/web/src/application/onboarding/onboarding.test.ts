@@ -165,6 +165,7 @@ describe('onboarding errors', () => {
       await app.lifeWheel({ mood: 4 }),
       await app.measure({ weightKg: 9999 }),
       await app.rhythm({ ...defaultRhythm(), sleepTargetMinutes: 0 }),
+      await app.rhythm({ ...defaultRhythm(), wakeTime: '7h' }),
       await app.why('a'.repeat(500)),
       await app.goals([]),
     ];

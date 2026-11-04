@@ -20,6 +20,7 @@ const IMPORT_CLOCK = "import { SystemClock } from '../../infrastructure/clock/sy
 const IMPORT_USE_CASE =
   "import { createGetCurrentDay } from '../../application/day/getCurrentDay';\n";
 const IMPORT_DOMAIN = "import { dayKeyOf } from '../../domain/shared/dayKey';\n";
+const IMPORT_DOMAIN_TYPE = "import type { DayKey } from '../../domain/shared/dayKey';\n";
 
 describe('architecture boundaries (CLAUDE.md, section 4)', () => {
   it.each([
@@ -27,6 +28,7 @@ describe('architecture boundaries (CLAUDE.md, section 4)', () => {
     ['domain → application', `${SRC}/domain/shared/probe.ts`, IMPORT_USE_CASE],
     ['application → infrastructure', `${SRC}/application/day/probe.ts`, IMPORT_CLOCK],
     ['presentation → infrastructure', `${SRC}/presentation/screens/probe.ts`, IMPORT_CLOCK],
+    ['presentation → domain logic', `${SRC}/presentation/screens/probe.ts`, IMPORT_DOMAIN],
   ])('forbids %s', async (_label, file, code) => {
     expect(await ruleViolations(file, `${code}export {};\n`)).toContain('boundaries/dependencies');
   });
@@ -35,6 +37,7 @@ describe('architecture boundaries (CLAUDE.md, section 4)', () => {
     ['application → domain', `${SRC}/application/day/probe.ts`, IMPORT_DOMAIN],
     ['infrastructure → domain', `${SRC}/infrastructure/clock/probe.ts`, IMPORT_DOMAIN],
     ['presentation → application', `${SRC}/presentation/screens/probe.ts`, IMPORT_USE_CASE],
+    ['presentation → domain types', `${SRC}/presentation/screens/probe.ts`, IMPORT_DOMAIN_TYPE],
     ['container → infrastructure', `${SRC}/presentation/app/container.ts`, IMPORT_CLOCK],
   ])('allows %s', async (_label, file, code) => {
     expect(await ruleViolations(file, `${code}export {};\n`)).not.toContain(
