@@ -49,3 +49,43 @@ export function revokeConsent(consents: ConsentSet, purpose: ConsentPurpose, at:
     [purpose]: revoked,
   });
 }
+
+export type ConsentChoices = Readonly<Record<ConsentPurpose, boolean>>;
+
+export interface ConsentChoice {
+  readonly purpose: ConsentPurpose;
+  readonly granted: boolean;
+}
+
+export function decideConsent(
+  consents: ConsentSet,
+  { purpose, granted }: ConsentChoice,
+  at: Date,
+): Result<ConsentSet, DomainError> {
+  return granted ? grantConsent(consents, purpose, at) : ok(revokeConsent(consents, purpose, at));
+}
+
+/**
+ * Applies the whole consent screen at once. Prerequisites come first in CONSENT_PURPOSES,
+ * so "AI" is granted before "journal sent to the AI" is checked.
+ */
+export function applyConsentChoices(
+  consents: ConsentSet,
+  choices: ConsentChoices,
+  at: Date,
+): Result<ConsentSet, DomainError> {
+  let current = consents;
+  for (const purpose of CONSENT_PURPOSES) {
+    const decided = decideConsent(current, { purpose, granted: choices[purpose] }, at);
+    if (!decided.ok) {
+      return decided;
+    }
+    current = decided.value;
+  }
+  return ok(current);
+}
+
+/** The purpose that must be granted first, if any (the journal needs the AI). */
+export function consentPrerequisite(purpose: ConsentPurpose): ConsentPurpose | undefined {
+  return REQUIRES[purpose];
+}

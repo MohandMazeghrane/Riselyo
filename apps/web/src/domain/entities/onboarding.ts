@@ -1,4 +1,4 @@
-/** Screens A0 to A5, in the order they are shown. Consents (A6) arrive with task 1.7. */
+/** Screens A0 to A6, in the order they are shown. */
 export const ONBOARDING_STEPS = [
   'welcome',
   'lifeWheel',
@@ -6,6 +6,7 @@ export const ONBOARDING_STEPS = [
   'rhythm',
   'why',
   'goals',
+  'consents',
 ] as const;
 
 export type OnboardingStep = (typeof ONBOARDING_STEPS)[number];

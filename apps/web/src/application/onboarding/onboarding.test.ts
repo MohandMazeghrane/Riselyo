@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { FakeClock } from '../../../test/fakes/fakeClock';
 import {
   InMemoryBodyMeasurementsRepository,
+  InMemoryConsentRepository,
   InMemoryHabitRepository,
   InMemoryLifeWheelRepository,
   InMemoryProfileRepository,
@@ -12,6 +13,7 @@ import { defaultRhythm } from '../../domain/entities/rhythm';
 import { parseDayKey } from '../../domain/shared/dayKey';
 import { createGetDayZeroLifeWheel } from './getDayZeroLifeWheel';
 import { createGetOnboardingStatus } from './getOnboardingStatus';
+import { createSubmitConsents } from './submitConsents';
 import { createSubmitFirstGoals } from './submitFirstGoals';
 import { createSubmitLifeWheel } from './submitLifeWheel';
 import { createSubmitMeasurements } from './submitMeasurements';
@@ -20,6 +22,8 @@ import { createSubmitWelcome } from './submitWelcome';
 import { createSubmitWhy } from './submitWhy';
 
 const DAY_ZERO = unwrap(parseDayKey('2026-11-04'));
+const NOW = new Date('2026-11-04T09:00:00Z');
+const NOTHING_ACCEPTED = { ai: false, aiJournal: false, health: false, notifications: false };
 const NEXT_DAY = unwrap(parseDayKey('2026-11-05'));
 const SCORES = Object.fromEntries(LIFE_DOMAINS.map((domain) => [domain, 7])) as Record<
   LifeDomain,
@@ -31,7 +35,8 @@ function setup() {
   const lifeWheels = new InMemoryLifeWheelRepository();
   const measurements = new InMemoryBodyMeasurementsRepository();
   const habits = new InMemoryHabitRepository();
-  const clock = new FakeClock(new Date('2026-11-04T09:00:00Z'), {
+  const consentStore = new InMemoryConsentRepository();
+  const clock = new FakeClock(NOW, {
     date: DAY_ZERO,
     hour: 10,
     minute: 0,
@@ -50,6 +55,8 @@ function setup() {
     rhythm: createSubmitRhythm({ profiles }),
     why: createSubmitWhy({ profiles }),
     goals: createSubmitFirstGoals({ profiles, habits, clock }),
+    consentStore,
+    consents: createSubmitConsents({ profiles, consents: consentStore, clock }),
   };
 }
 
@@ -89,8 +96,36 @@ describe('onboarding part A', () => {
     unwrap(await app.rhythm(defaultRhythm()));
     unwrap(await app.why(''));
     unwrap(await app.goals(['walk']));
+    expect(unwrap(await app.status()).nextStep).toBe('consents');
+    unwrap(await app.consents(NOTHING_ACCEPTED));
 
     expect(unwrap(await app.status()).nextStep).toBe('done');
+  });
+
+  it('records every consent decision with its date (A6)', async () => {
+    unwrap(await app.welcome('Sam'));
+    unwrap(await app.consents({ ...NOTHING_ACCEPTED, health: true }));
+
+    expect(app.consentStore.consents).toMatchObject({
+      health: { granted: true, decidedAt: NOW },
+      ai: { granted: false, decidedAt: NOW },
+    });
+  });
+
+  it('does not finish the consent step on an impossible choice', async () => {
+    unwrap(await app.welcome('Sam'));
+
+    expect(await app.consents({ ...NOTHING_ACCEPTED, aiJournal: true })).toMatchObject({
+      ok: false,
+    });
+    expect(app.profiles.profile?.completedSteps).not.toContain('consents');
+  });
+
+  it('reports a consent storage failure', async () => {
+    unwrap(await app.welcome('Sam'));
+    app.consentStore.failing = true;
+
+    expect((await app.consents(NOTHING_ACCEPTED)).ok).toBe(false);
   });
 
   it('stores the life wheel on day 0 and gives it back for the radar', async () => {

@@ -1,12 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import {
+  applyConsentChoices,
+  consentPrerequisite,
   CONSENT_PURPOSES,
+  decideConsent,
   defaultConsents,
   grantConsent,
   isGranted,
   revokeConsent,
   type ConsentSet,
 } from './consent';
+
+const ALL_REFUSED = { ai: false, aiJournal: false, health: false, notifications: false };
 
 const MORNING = new Date('2026-11-04T08:00:00Z');
 const EVENING = new Date('2026-11-04T20:00:00Z');
@@ -58,6 +63,65 @@ describe('grantConsent', () => {
   });
 });
 
+describe('decideConsent', () => {
+  it('grants or revokes depending on the choice', () => {
+    const granted = decideConsent(defaultConsents(), { purpose: 'health', granted: true }, MORNING);
+    const refused = decideConsent(
+      defaultConsents(),
+      { purpose: 'health', granted: false },
+      MORNING,
+    );
+
+    expect(granted).toMatchObject({ ok: true, value: { health: { granted: true } } });
+    expect(refused).toMatchObject({
+      ok: true,
+      value: { health: { granted: false, decidedAt: MORNING } },
+    });
+  });
+
+  it('keeps the prerequisite rule', () => {
+    expect(
+      decideConsent(defaultConsents(), { purpose: 'aiJournal', granted: true }, MORNING).ok,
+    ).toBe(false);
+  });
+});
+
+describe('applyConsentChoices', () => {
+  it('dates every decision, refusals included', () => {
+    const result = applyConsentChoices(defaultConsents(), ALL_REFUSED, MORNING);
+
+    for (const purpose of CONSENT_PURPOSES) {
+      expect(result).toMatchObject({
+        ok: true,
+        value: { [purpose]: { granted: false, decidedAt: MORNING } },
+      });
+    }
+  });
+
+  it('accepts the journal in the same screen as the AI', () => {
+    const result = applyConsentChoices(
+      defaultConsents(),
+      { ...ALL_REFUSED, ai: true, aiJournal: true },
+      MORNING,
+    );
+
+    expect(result).toMatchObject({
+      ok: true,
+      value: { ai: { granted: true }, aiJournal: { granted: true } },
+    });
+  });
+
+  it('refuses the journal without the AI', () => {
+    const result = applyConsentChoices(
+      defaultConsents(),
+      { ...ALL_REFUSED, aiJournal: true },
+      MORNING,
+    );
+
+    expect(result).toMatchObject({ ok: false, error: { code: 'invalid_input' } });
+  });
+});
+
 describe('revokeConsent', () => {
   it('revokes a purpose and records when', () => {
     const consents = revokeConsent(grantedOrFail(defaultConsents(), 'health'), 'health', EVENING);
@@ -80,5 +144,12 @@ describe('revokeConsent', () => {
     const consents = revokeConsent(before, 'ai', EVENING);
 
     expect(consents.notifications).toEqual({ granted: true, decidedAt: MORNING });
+  });
+});
+
+describe('consentPrerequisite', () => {
+  it('ties the journal to the AI and nothing else', () => {
+    expect(consentPrerequisite('aiJournal')).toBe('ai');
+    expect(consentPrerequisite('health')).toBeUndefined();
   });
 });

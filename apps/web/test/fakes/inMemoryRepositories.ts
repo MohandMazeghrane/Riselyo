@@ -1,3 +1,5 @@
+import { defaultConsents, type ConsentSet } from '../../src/domain/entities/consent';
+import type { ConsentRepository } from '../../src/domain/ports/consentRepository';
 import type { BodyMeasurements } from '../../src/domain/entities/bodyMeasurements';
 import type { Habit } from '../../src/domain/entities/habit';
 import type { LifeWheel } from '../../src/domain/entities/lifeWheel';
@@ -75,6 +77,20 @@ export class InMemoryHabitRepository extends FakeStore implements HabitRepositor
   replaceActive(habits: readonly Habit[]): Promise<Result<void, DomainError>> {
     return this.attempt(() => {
       this.habits = [...habits];
+    });
+  }
+}
+
+export class InMemoryConsentRepository extends FakeStore implements ConsentRepository {
+  consents: ConsentSet = defaultConsents();
+
+  load(): Promise<Result<ConsentSet, DomainError>> {
+    return this.attempt(() => this.consents);
+  }
+
+  save(consents: ConsentSet): Promise<Result<void, DomainError>> {
+    return this.attempt(() => {
+      this.consents = consents;
     });
   }
 }

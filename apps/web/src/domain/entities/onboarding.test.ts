@@ -10,6 +10,13 @@ describe('nextOnboardingStep', () => {
     expect(nextOnboardingStep(['welcome', 'lifeWheel'])).toBe('measurements');
   });
 
+  it('ends with the consents screen (A6)', () => {
+    expect(ONBOARDING_STEPS.at(-1)).toBe('consents');
+    expect(
+      nextOnboardingStep(['welcome', 'lifeWheel', 'measurements', 'rhythm', 'why', 'goals']),
+    ).toBe('consents');
+  });
+
   it('is done once every step is completed', () => {
     expect(nextOnboardingStep(ONBOARDING_STEPS)).toBe('done');
   });
