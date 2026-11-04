@@ -5,12 +5,13 @@ import {
   VICTORY_MAX_LENGTH,
 } from '../../domain/config/checkIn';
 import type { DailyPriority } from '../../domain/entities/dayEntry';
-import type { HabitTemplateId } from '../../domain/entities/habit';
+import type { Habit, HabitTemplateId } from '../../domain/entities/habit';
 import {
   levelsAvailableFor,
   type HabitLevel,
   type HabitLevelAnswers,
 } from '../../domain/entities/habitLog';
+import { suggestedHabitLevels, type QuickCounts } from '../../domain/entities/quickCounts';
 
 /** What the check-in screens need to build their forms, without touching domain logic. */
 export const CHECK_IN_FORM = {
@@ -39,4 +40,12 @@ export interface EveningForm {
 
 export function habitLevelsFor(templateId: HabitTemplateId): HabitLevel[] {
   return levelsAvailableFor(templateId);
+}
+
+/** Levels the quick buttons already reached (water, walk), to pre-fill the evening. */
+export function habitLevelsFromQuickButtons(
+  quick: QuickCounts,
+  activeHabits: readonly Habit[],
+): HabitLevelAnswers {
+  return suggestedHabitLevels(quick, activeHabits);
 }

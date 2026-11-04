@@ -40,6 +40,19 @@ import {
   createSubmitMorningCheckIn,
   type SubmitMorningCheckIn,
 } from '../../application/checkin/submitMorningCheckIn';
+import { createAddHabit, type AddHabit } from '../../application/habits/addHabit';
+import {
+  createAdjustQuickCount,
+  type AdjustQuickCount,
+} from '../../application/habits/adjustQuickCount';
+import {
+  createChangeHabitTarget,
+  type ChangeHabitTarget,
+} from '../../application/habits/changeHabitTarget';
+import { createGetHabitPlan, type GetHabitPlan } from '../../application/habits/getHabitPlan';
+import { createGetTodayHabits, type GetTodayHabits } from '../../application/habits/getTodayHabits';
+import { createLogHabitLevel, type LogHabitLevel } from '../../application/habits/logHabitLevel';
+import { createStopHabit, type StopHabit } from '../../application/habits/stopHabit';
 import type { AppAdapters } from './appRepositories';
 
 export interface OnboardingUseCases {
@@ -65,12 +78,23 @@ export interface CheckInUseCases {
   readonly submitEvening: SubmitEveningCheckIn;
 }
 
+export interface HabitUseCases {
+  readonly getToday: GetTodayHabits;
+  readonly logLevel: LogHabitLevel;
+  readonly adjustQuickCount: AdjustQuickCount;
+  readonly getPlan: GetHabitPlan;
+  readonly add: AddHabit;
+  readonly changeTarget: ChangeHabitTarget;
+  readonly stop: StopHabit;
+}
+
 /** Use cases exposed to the UI. */
 export interface AppContainer {
   readonly getCurrentDay: GetCurrentDay;
   readonly onboarding: OnboardingUseCases;
   readonly privacy: PrivacyUseCases;
   readonly checkIn: CheckInUseCases;
+  readonly habits: HabitUseCases;
 }
 
 /** Wires the use cases to whatever adapters are given (Dexie in the app, fakes in tests). */
@@ -88,6 +112,19 @@ export function createUseCases(adapters: AppAdapters): AppContainer {
       submitMorning: createSubmitMorningCheckIn(adapters),
       submitEvening: createSubmitEveningCheckIn(adapters),
     },
+    habits: createHabitUseCases(adapters),
+  };
+}
+
+function createHabitUseCases(adapters: AppAdapters): HabitUseCases {
+  return {
+    getToday: createGetTodayHabits(adapters),
+    logLevel: createLogHabitLevel(adapters),
+    adjustQuickCount: createAdjustQuickCount(adapters),
+    getPlan: createGetHabitPlan(adapters),
+    add: createAddHabit(adapters),
+    changeTarget: createChangeHabitTarget(adapters),
+    stop: createStopHabit(adapters),
   };
 }
 
