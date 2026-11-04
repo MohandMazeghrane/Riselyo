@@ -23,7 +23,11 @@ export interface BodyMeasurementsRepository {
   save(measurements: BodyMeasurements): Promise<Result<void, DomainError>>;
 }
 
+/** There is at most one habit per template: the template id identifies the habit. */
 export interface HabitRepository {
   listActive(): Promise<Result<Habit[], DomainError>>;
+  /** Onboarding only: the first goals replace whatever was chosen before. */
   replaceActive(habits: readonly Habit[]): Promise<Result<void, DomainError>>;
+  /** Adds the habit, or replaces the one with the same template (active or not). */
+  save(habit: Habit): Promise<Result<void, DomainError>>;
 }

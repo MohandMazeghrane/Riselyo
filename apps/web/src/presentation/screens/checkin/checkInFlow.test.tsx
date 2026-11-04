@@ -141,6 +141,7 @@ describe('evening check-in', () => {
         completedAt: new Date('2026-11-05T07:00:00Z'),
       },
       evening: null,
+      quick: { waterGlasses: 0, walkMinutes: 0, workouts: 0, healthyMeals: 0, cravingsResisted: 0 },
     });
     renderApp('/check-in/soir', testApp);
     await screen.findByRole('group', { name: 'Ton humeur' });

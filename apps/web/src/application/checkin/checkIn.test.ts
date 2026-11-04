@@ -7,11 +7,13 @@ import {
   InMemoryProfileRepository,
 } from '../../../test/fakes/inMemoryRepositories';
 import { unwrap } from '../../../test/fixtures/unwrap';
+import { emptyDayEntry } from '../../domain/entities/dayEntry';
 import { chooseFirstGoals } from '../../domain/entities/habit';
+import { emptyQuickCounts } from '../../domain/entities/quickCounts';
 import { startProfile } from '../../domain/entities/profile';
 import { defaultRhythm } from '../../domain/entities/rhythm';
 import { parseDayKey } from '../../domain/shared/dayKey';
-import type { EveningForm, MorningForm } from './checkInForm';
+import { habitLevelsFromQuickButtons, type EveningForm, type MorningForm } from './checkInForm';
 import { createGetCheckInDay } from './getCheckInDay';
 import { createSubmitEveningCheckIn } from './submitEveningCheckIn';
 import { createSubmitMorningCheckIn } from './submitMorningCheckIn';
@@ -63,7 +65,7 @@ describe('check-ins', () => {
     const day = unwrap(await app.getDay());
 
     expect(day.day).toBe(TODAY);
-    expect(day.entry).toEqual({ day: TODAY, morning: null, evening: null });
+    expect(day.entry).toEqual(emptyDayEntry(TODAY));
     expect(day.activeHabits.map((habit) => habit.templateId)).toEqual(['walk', 'read']);
     expect(day.rhythm?.bedtime).toBe('23:30');
   });
@@ -159,5 +161,13 @@ describe('check-ins', () => {
     app.habitLogs.failing = false;
     app.profiles.failing = true;
     expect((await app.getDay()).ok).toBe(false);
+  });
+});
+
+describe('habitLevelsFromQuickButtons', () => {
+  it('pre-fills the walk from the minutes added on the home screen', () => {
+    const habits = unwrap(chooseFirstGoals(['walk', 'read'], TODAY));
+    const quick = { ...emptyQuickCounts(), walkMinutes: 30 };
+    expect(habitLevelsFromQuickButtons(quick, habits)).toEqual({ walk: 'normal' });
   });
 });

@@ -16,6 +16,7 @@ import {
   type MorningCheckIn,
   type MorningInput,
 } from './dayEntry';
+import { emptyQuickCounts } from './quickCounts';
 
 const DAY = unwrap(parseDayKey('2026-11-05'));
 const AT = new Date('2026-11-05T07:10:00Z');
@@ -34,7 +35,12 @@ const morningWith = (input: Partial<MorningInput>) =>
 
 describe('emptyDayEntry', () => {
   it('starts a day without any check-in', () => {
-    expect(emptyDayEntry(DAY)).toEqual({ day: DAY, morning: null, evening: null });
+    expect(emptyDayEntry(DAY)).toEqual({
+      day: DAY,
+      morning: null,
+      evening: null,
+      quick: emptyQuickCounts(),
+    });
   });
 });
 

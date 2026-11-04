@@ -1,31 +1,47 @@
-import type Dexie from 'dexie';
-import { HABIT_CATALOGUE, type HabitTemplateId } from '../../../domain/entities/habit';
+import Dexie from 'dexie';
+import { ALL_HABIT_IDS, type HabitTemplateId } from '../../../domain/entities/habit';
 import { HABIT_LEVELS, type HabitLevel, type HabitLog } from '../../../domain/entities/habitLog';
 import type { HabitLogRepository } from '../../../domain/ports/checkInRepositories';
-import type { DayKey } from '../../../domain/shared/dayKey';
+import { parseDayKey, type DayKey } from '../../../domain/shared/dayKey';
 import type { DomainError } from '../../../domain/shared/domainError';
 import { ok, type Result } from '../../../domain/shared/result';
-import { asFields, storageResult } from '../storageResult';
+import { asFields, storageResult, textOrEmpty } from '../storageResult';
 
 /** Stored level, as documented in CLAUDE.md (section 5): "not done" is 0. */
 type StoredLevel = 0 | Exclude<HabitLevel, 'none'>;
 
 const NOT_DONE = 0;
-const TEMPLATE_IDS: readonly HabitTemplateId[] = HABIT_CATALOGUE.map(({ id }) => id);
 
 /** Logs are keyed by habit template: there is one habit per template. */
 export class DexieHabitLogRepository implements HabitLogRepository {
   constructor(private readonly db: Dexie) {}
 
-  async listByDay(day: DayKey): Promise<Result<HabitLog[], DomainError>> {
-    const read = await storageResult('could not read the habit logs', () =>
-      this.db.table('habitLogs').where('date').equals(day).toArray(),
+  listByDay(day: DayKey): Promise<Result<HabitLog[], DomainError>> {
+    return this.read(() => this.db.table('habitLogs').where('date').equals(day).toArray());
+  }
+
+  listSince(day: DayKey): Promise<Result<HabitLog[], DomainError>> {
+    return this.read(() => this.db.table('habitLogs').where('date').aboveOrEqual(day).toArray());
+  }
+
+  listForHabit(templateId: HabitTemplateId): Promise<Result<HabitLog[], DomainError>> {
+    return this.read(() =>
+      this.db
+        .table('habitLogs')
+        .where('[habitId+date]')
+        .between([templateId, Dexie.minKey], [templateId, Dexie.maxKey])
+        .toArray(),
     );
-    if (!read.ok) {
-      return read;
-    }
-    const records: unknown[] = read.value;
-    return ok(records.map((record) => fromRecord(record, day)).filter((log) => log !== null));
+  }
+
+  save(log: HabitLog): Promise<Result<void, DomainError>> {
+    const table = this.db.table('habitLogs');
+    return storageResult('could not save the habit log', () =>
+      this.db.transaction('rw', table, async () => {
+        await table.where('[habitId+date]').equals([log.templateId, log.day]).delete();
+        await table.add(toRecord(log));
+      }),
+    );
   }
 
   replaceForDay(day: DayKey, logs: readonly HabitLog[]): Promise<Result<void, DomainError>> {
@@ -37,6 +53,14 @@ export class DexieHabitLogRepository implements HabitLogRepository {
       }),
     );
   }
+
+  private async read(query: () => Promise<unknown[]>): Promise<Result<HabitLog[], DomainError>> {
+    const read = await storageResult('could not read the habit logs', query);
+    if (!read.ok) {
+      return read;
+    }
+    return ok(read.value.map(fromRecord).filter((log) => log !== null));
+  }
 }
 
 function toRecord({ templateId, day, level }: HabitLog): object {
@@ -45,15 +69,16 @@ function toRecord({ templateId, day, level }: HabitLog): object {
 }
 
 /** Unknown or damaged rows are skipped rather than shown wrong. */
-function fromRecord(value: unknown, day: DayKey): HabitLog | null {
-  const fields = asFields<'habitId' | 'level'>(value);
-  const templateId = TEMPLATE_IDS.find((id) => id === fields?.habitId);
+function fromRecord(value: unknown): HabitLog | null {
+  const fields = asFields<'habitId' | 'date' | 'level'>(value);
+  const templateId = ALL_HABIT_IDS.find((id) => id === fields?.habitId);
+  const day = parseDayKey(textOrEmpty(fields?.date));
   const level =
     fields?.level === NOT_DONE
       ? 'none'
       : HABIT_LEVELS.find((candidate) => candidate === fields?.level);
-  if (templateId === undefined || level === undefined) {
+  if (templateId === undefined || !day.ok || level === undefined) {
     return null;
   }
-  return { templateId, day, level };
+  return { templateId, day: day.value, level };
 }

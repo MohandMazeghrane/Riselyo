@@ -9,6 +9,7 @@ import { domainError, type DomainError } from '../shared/domainError';
 import { err, ok, type Result } from '../shared/result';
 import { minutesBetween, type TimeOfDay } from '../shared/timeOfDay';
 import type { HabitTemplateId } from './habit';
+import { emptyQuickCounts, type QuickCounts } from './quickCounts';
 
 /** One single action for the day: one of the goals, or written freely. */
 export type DailyPriority =
@@ -50,10 +51,12 @@ export interface DayEntry {
   readonly day: DayKey;
   readonly morning: MorningCheckIn | null;
   readonly evening: EveningCheckIn | null;
+  /** What the quick buttons of the home screen added up to. */
+  readonly quick: QuickCounts;
 }
 
 export function emptyDayEntry(day: DayKey): DayEntry {
-  return { day, morning: null, evening: null };
+  return { day, morning: null, evening: null, quick: emptyQuickCounts() };
 }
 
 export function createMorningCheckIn(

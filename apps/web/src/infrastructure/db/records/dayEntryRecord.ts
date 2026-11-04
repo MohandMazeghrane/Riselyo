@@ -6,7 +6,8 @@ import {
   type EveningCheckIn,
   type MorningCheckIn,
 } from '../../../domain/entities/dayEntry';
-import { HABIT_CATALOGUE, type HabitTemplateId } from '../../../domain/entities/habit';
+import { ALL_HABIT_IDS, type HabitTemplateId } from '../../../domain/entities/habit';
+import { quickCountsFrom, type QuickCounts } from '../../../domain/entities/quickCounts';
 import { parseDayKey } from '../../../domain/shared/dayKey';
 import { parseTimeOfDay } from '../../../domain/shared/timeOfDay';
 import { asFields, textOrEmpty } from '../storageResult';
@@ -16,11 +17,14 @@ export interface DayEntryRecord {
   readonly date: string;
   readonly morning: (Omit<MorningCheckIn, 'completedAt'> & { readonly completedAt: string }) | null;
   readonly evening: (Omit<EveningCheckIn, 'completedAt'> & { readonly completedAt: string }) | null;
+  /** Missing in entries saved before task 1.9: read as zero. */
+  readonly quick?: QuickCounts;
 }
 
-export function toDayEntryRecord({ day, morning, evening }: DayEntry): DayEntryRecord {
+export function toDayEntryRecord({ day, morning, evening, quick }: DayEntry): DayEntryRecord {
   return {
     date: day,
+    quick,
     morning:
       morning === null ? null : { ...morning, completedAt: morning.completedAt.toISOString() },
     evening:
@@ -40,7 +44,7 @@ export function fromDayEntryRecord(value: unknown): DayEntry | null {
   if (morning === undefined || evening === undefined) {
     return null;
   }
-  return { day: day.value, morning, evening };
+  return { day: day.value, morning, evening, quick: quickCountsFrom(fields.quick) };
 }
 
 function readMorning(value: unknown): MorningCheckIn | undefined {
@@ -81,10 +85,8 @@ function readEvening(value: unknown, morning: MorningCheckIn | null): EveningChe
   return evening.ok ? evening.value : undefined;
 }
 
-const TEMPLATE_IDS: readonly HabitTemplateId[] = HABIT_CATALOGUE.map(({ id }) => id);
-
 function isTemplateId(value: unknown): value is HabitTemplateId {
-  return TEMPLATE_IDS.some((id) => id === value);
+  return ALL_HABIT_IDS.some((id) => id === value);
 }
 
 function readPriority(value: unknown): DailyPriority | null {

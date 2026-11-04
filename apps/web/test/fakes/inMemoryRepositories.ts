@@ -7,7 +7,7 @@ import type {
 import { defaultConsents, type ConsentSet } from '../../src/domain/entities/consent';
 import type { ConsentRepository } from '../../src/domain/ports/consentRepository';
 import type { BodyMeasurements } from '../../src/domain/entities/bodyMeasurements';
-import type { Habit } from '../../src/domain/entities/habit';
+import type { Habit, HabitTemplateId } from '../../src/domain/entities/habit';
 import type { LifeWheel } from '../../src/domain/entities/lifeWheel';
 import type { Profile } from '../../src/domain/entities/profile';
 import type {
@@ -82,7 +82,18 @@ export class InMemoryHabitRepository extends FakeStore implements HabitRepositor
 
   replaceActive(habits: readonly Habit[]): Promise<Result<void, DomainError>> {
     return this.attempt(() => {
-      this.habits = [...habits];
+      const replaced = (habit: Habit): boolean =>
+        habit.active || habits.some(({ templateId }) => templateId === habit.templateId);
+      this.habits = [...this.habits.filter((habit) => !replaced(habit)), ...habits];
+    });
+  }
+
+  save(habit: Habit): Promise<Result<void, DomainError>> {
+    return this.attempt(() => {
+      this.habits = [
+        ...this.habits.filter((existing) => existing.templateId !== habit.templateId),
+        habit,
+      ];
     });
   }
 }
@@ -120,6 +131,22 @@ export class InMemoryHabitLogRepository extends FakeStore implements HabitLogRep
 
   listByDay(day: DayKey): Promise<Result<HabitLog[], DomainError>> {
     return this.attempt(() => this.logs.filter((log) => log.day === day));
+  }
+
+  listSince(day: DayKey): Promise<Result<HabitLog[], DomainError>> {
+    return this.attempt(() => this.logs.filter((log) => log.day >= day));
+  }
+
+  listForHabit(templateId: HabitTemplateId): Promise<Result<HabitLog[], DomainError>> {
+    return this.attempt(() => this.logs.filter((log) => log.templateId === templateId));
+  }
+
+  save(log: HabitLog): Promise<Result<void, DomainError>> {
+    return this.attempt(() => {
+      const isSame = (other: HabitLog): boolean =>
+        other.day === log.day && other.templateId === log.templateId;
+      this.logs = [...this.logs.filter((other) => !isSame(other)), log];
+    });
   }
 
   replaceForDay(day: DayKey, logs: readonly HabitLog[]): Promise<Result<void, DomainError>> {

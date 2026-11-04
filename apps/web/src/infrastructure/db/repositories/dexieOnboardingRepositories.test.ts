@@ -2,7 +2,7 @@ import type Dexie from 'dexie';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { memoryIndexedDb } from '../../../../test/fakes/memoryIndexedDb';
 import { unwrap } from '../../../../test/fixtures/unwrap';
-import { chooseFirstGoals } from '../../../domain/entities/habit';
+import { chooseFirstGoals, createHabit } from '../../../domain/entities/habit';
 import { LIFE_DOMAINS, type LifeDomain } from '../../../domain/entities/lifeWheel';
 import { markStepCompleted, startProfile, type Profile } from '../../../domain/entities/profile';
 import { defaultRhythm } from '../../../domain/entities/rhythm';
@@ -124,6 +124,26 @@ describe('DexieHabitRepository', () => {
     });
   });
 
+  it('saves a habit in place of the one with the same template', async () => {
+    const repository = new DexieHabitRepository(db);
+    const read = createHabit('read', DAY);
+    unwrap(await repository.replaceActive([createHabit('walk', DAY)]));
+    unwrap(await repository.save(read));
+    unwrap(await repository.save({ ...read, tier: 'excellent' }));
+    unwrap(await repository.save({ ...createHabit('walk', DAY), active: false }));
+
+    expect(unwrap(await repository.listActive())).toEqual([{ ...read, tier: 'excellent' }]);
+    expect(await db.table('habits').count()).toBe(2);
+  });
+
+  it('keeps one row per template when the first goals are chosen again', async () => {
+    const repository = new DexieHabitRepository(db);
+    unwrap(await repository.save({ ...createHabit('walk', DAY), active: false }));
+    unwrap(await repository.replaceActive([createHabit('walk', DAY)]));
+
+    expect(await db.table('habits').count()).toBe(1);
+  });
+
   it('skips damaged rows', async () => {
     await db
       .table('habits')
@@ -138,5 +158,6 @@ describe('DexieHabitRepository', () => {
 
     expect((await repository.listActive()).ok).toBe(false);
     expect((await repository.replaceActive([])).ok).toBe(false);
+    expect((await repository.save(createHabit('walk', DAY))).ok).toBe(false);
   });
 });

@@ -39,6 +39,11 @@ export function checkHabitAddition(input: HabitAdditionInput): HabitAdditionChec
   return checkAdherence(habitsToBuild, input);
 }
 
+/** First day whose logs count in the adherence check. */
+export function adherenceWindowStart(today: DayKey): DayKey {
+  return daysBefore(today, NEW_HABIT_ADHERENCE_WINDOW_DAYS).at(-1) ?? today;
+}
+
 export function addHabit(input: HabitAdditionInput): Result<Habit, DomainError> {
   const check = checkHabitAddition(input);
   if (!check.allowed) {

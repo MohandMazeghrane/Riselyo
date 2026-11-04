@@ -4,7 +4,7 @@ import { NEW_HABIT_ADHERENCE_WINDOW_DAYS, NEW_HABIT_MIN_ANSWERED_DAYS } from '..
 import { daysBefore, parseDayKey, type DayKey } from '../shared/dayKey';
 import { createHabit, type Habit, type HabitTemplateId } from './habit';
 import type { HabitLevel, HabitLog } from './habitLog';
-import { addHabit, checkHabitAddition, daysWithout } from './habitProgress';
+import { addHabit, adherenceWindowStart, checkHabitAddition, daysWithout } from './habitProgress';
 
 const TODAY = unwrap(parseDayKey('2026-11-20'));
 const PAST = daysBefore(TODAY, NEW_HABIT_ADHERENCE_WINDOW_DAYS + 1);
@@ -174,5 +174,11 @@ describe('daysWithout', () => {
       0,
     );
     expect(daysWithout([])).toBe(0);
+  });
+});
+
+describe('adherenceWindowStart', () => {
+  it('is the oldest day of the window', () => {
+    expect(adherenceWindowStart(TODAY)).toBe(ago(NEW_HABIT_ADHERENCE_WINDOW_DAYS));
   });
 });
