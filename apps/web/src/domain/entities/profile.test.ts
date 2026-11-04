@@ -1,6 +1,31 @@
 import { describe, expect, it } from 'vitest';
+import { unwrap } from '../../../test/fixtures/unwrap';
 import { FIRST_NAME_MAX_LENGTH, WHY_MAX_LENGTH } from '../config/onboarding';
-import { parseFirstName, parseWhy } from './profile';
+import { parseDayKey } from '../shared/dayKey';
+import { markStepCompleted, parseFirstName, parseWhy, startProfile } from './profile';
+
+const DAY_ZERO = unwrap(parseDayKey('2026-11-04'));
+
+describe('startProfile', () => {
+  it('starts on day 0 with only the welcome step done', () => {
+    expect(startProfile('Sam', DAY_ZERO)).toEqual({
+      firstName: 'Sam',
+      dayZero: DAY_ZERO,
+      why: null,
+      rhythm: null,
+      completedSteps: ['welcome'],
+    });
+  });
+});
+
+describe('markStepCompleted', () => {
+  it('records the step without touching the rest of the profile', () => {
+    const profile = markStepCompleted(startProfile('Sam', DAY_ZERO), 'lifeWheel');
+
+    expect(profile.completedSteps).toEqual(['welcome', 'lifeWheel']);
+    expect(profile.firstName).toBe('Sam');
+  });
+});
 
 describe('parseFirstName', () => {
   it('trims and collapses spaces', () => {
