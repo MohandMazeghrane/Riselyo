@@ -11,7 +11,7 @@
 
 | Phase | Statut | Avancement | Critère de passage |
 | --- | --- | --- | --- |
-| 1 — Socle et suivi de base | 🚧 En cours | 2 / 16 | 7 jours d'usage réel sans bug bloquant |
+| 1 — Socle et suivi de base | 🚧 En cours | 3 / 16 | 7 jours d'usage réel sans bug bloquant |
 | 2 — Coach IA et Apple Santé | 🔒 Bloquée | 0 / 13 | Coach jugé utile, coût réel < 1 € sur 2 semaines, import Santé fiable 7 jours |
 | 3 — Moteur et bilans | 🔒 Bloquée | 0 / 8 | 3 bilans hebdo d'affilée sans chiffre faux |
 | 4 — Finitions | 🔒 Bloquée | 0 / 9 | Lighthouse PWA ≥ 90, audit sécurité et RGPD (sections 11 et 12) validé |
@@ -22,12 +22,12 @@ Le détail des tâches (cases à cocher) est en **section 16**. Les compteurs ci
 ### En ce moment
 
 - **Phase en cours** : 1
-- **Tâche en cours** : — (1.1 et 1.2 terminées)
-- **Prochaine tâche** : 1.3 — PWA installable (Vite, React, Tailwind, `vite-plugin-pwa`, polices auto-hébergées)
+- **Tâche en cours** : — (1.1, 1.2 et 1.3 terminées)
+- **Prochaine tâche** : 1.4 — En-têtes de sécurité (`_headers`, CSP) et scan de secrets en pré-commit
 - **Bloquants / questions ouvertes** :
   - Créer le dépôt GitHub distant et y pousser `main` pour activer la CI et Dependabot.
-  - Pour 1.3 : choix de la police et icône de l'app (sinon icône bleue provisoire).
   - Pour 1.4 : choisir le scanner de secrets (`secretlint` ou `gitleaks`).
+  - L'installation sur iPhone ne sera testable qu'après le déploiement (1.16) : il faut une URL en HTTPS.
 
 ### Dette technique et problèmes connus
 
@@ -37,12 +37,15 @@ _Format : `- [date] description — impact — piste de correction`._
 - [2026-11-04] `overrides.minimatch ^11.0.4` dans `package.json` — corrige une vulnérabilité modérée transitive d'ESLint (outillage de dev) — retirer quand ESLint embarquera minimatch ≥ 11.
 - [2026-11-04] `apps/worker` et `packages/shared` pas encore créés — aucun code à y mettre en phase 1 — les créer en 2.1 (les workspaces `apps/*` et `packages/*` sont déjà déclarés).
 - [2026-11-04] Le premier commit (`chore`) seul ne passe pas `typecheck` (`apps/web` vide) — aucun impact, corrigé par les deux commits suivants.
+- [2026-11-04] `npm audit` : 8 alertes modérées et 2 faibles dans `workbox-build` (glob, minimatch, deepmerge), utilisé seulement au build, rien dans le bundle — la CI n'échoue qu'au niveau haut — surveiller les mises à jour de `vite-plugin-pwa` via Dependabot.
+- [2026-11-04] Thème sombre : tokens et variante `dark` prêts, mais aucune bascule encore — prévu en 4.7.
 
 ### Journal des sessions
 
 | Date | Tâches faites | Tests | Commit(s) | Reste à tester sur le téléphone |
 | --- | --- | --- | --- | --- |
 | 2026-11-04 | 1.1 monorepo et outillage ; 1.2 squelette Clean Architecture (`Result`, `DomainError`, `DayKey`, port `Clock`, `SystemClock`, `FakeClock`, `getCurrentDay`, `container.ts`, test des frontières) | 32 tests, couverture domaine + application 100 % | `c9cb27b`, `b4dc70c`, `498e901` | Rien (pas encore d'interface) |
+| 2026-11-04 | 1.3 PWA installable : Vite 8, React 18, Tailwind 4, manifest FR, icônes, service worker (hors ligne vérifié serveur coupé), Inter auto-hébergée (latin), écran d'accueil | 35 tests (dont 3 de présentation) ; vérifié à 375 et 320 px | `17b48c5`, `970a0ae`, `9766186` | Après le déploiement (1.16) : ajout à l'écran d'accueil, icône, ouverture en mode avion |
 
 ---
 
@@ -103,7 +106,7 @@ _Format : `- [date] description — impact — piste de correction`._
 | --- | --- | --- |
 | Langage | TypeScript strict | `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` ; pas de `any` |
 | Front | React 18 + Vite | Composants fonctionnels + hooks uniquement |
-| Style | Tailwind CSS | Thème clair/sombre via `class`, tokens dans `tailwind.config.ts` |
+| Style | Tailwind CSS 4 | Thème clair/sombre via la classe `dark`, tokens en CSS (`@theme`) dans `presentation/app/index.css` |
 | Polices | Auto-hébergées (`@fontsource`) | **Pas de Google Fonts en CDN** (RGPD, section 12) |
 | PWA | `vite-plugin-pwa` (Workbox) | Manifest, service worker, cache hors ligne |
 | Routing | React Router | 5 onglets + écrans ponctuels |
@@ -552,7 +555,7 @@ Chaque phase se termine par une app **utilisable et déployée**. Cocher les cas
 
 - [x] 1.1 Monorepo, TypeScript strict, ESLint (+ frontières d'architecture), Prettier, Vitest, CI GitHub Actions
 - [x] 1.2 Squelette Clean Architecture : couches, ports, `container.ts`, `Result`, `Clock`
-- [ ] 1.3 PWA installable (manifest, icônes, service worker, hors ligne), polices auto-hébergées
+- [x] 1.3 PWA installable (manifest, icônes, service worker, hors ligne), polices auto-hébergées
 - [ ] 1.4 En-têtes de sécurité (`_headers`, CSP) et scan de secrets en pré-commit
 - [ ] 1.5 Schéma Dexie v1 + repositories + tests de migration
 - [ ] 1.6 Onboarding partie A (formulaire, roue de vie, horaires) — sans IA
@@ -661,5 +664,10 @@ Une tâche n'est terminée que si :
 | 2026-11-04 | `SystemClock` via `Intl.DateTimeFormat` (fuseau Europe/Paris), pas date-fns | Aucune dépendance pour l'heure locale ; date-fns reste prévu pour l'affichage |
 | 2026-11-04 | `LocalDateTime` + `dayKeyOf` dans le domaine ; bascule de journée à 4 h (`DAY_ROLLOVER_HOUR`) | Règle métier « une journée se termine à 4 h » testée dans le domaine, le port `Clock` ne fournit que l'heure murale |
 | 2026-11-04 | Faux adaptateurs de test dans `apps/web/test/fakes/` | Hors de `src/` : jamais embarqués dans le build |
+| 2026-11-04 | Police Inter (`@fontsource-variable/inter`), sous-ensemble latin seulement | Choix de l'utilisateur ; le latin couvre le français et divise par deux le cache hors ligne (209 Kio au lieu de 377) |
+| 2026-11-04 | Tailwind 4 (tokens dans `@theme`) au lieu de Tailwind 3 (`tailwind.config.ts`) | Choix de l'utilisateur : version maintenue ; section 3 mise à jour |
+| 2026-11-04 | Vite 8, `@vitejs/plugin-react`, `vite-plugin-pwa` (Workbox `generateSW`, `autoUpdate`, enregistrement par script externe), jsdom + Testing Library | Stack prévue section 3 ; script externe compatible avec une CSP `script-src 'self'` |
+| 2026-11-04 | Icônes générées par `apps/web/scripts/generate-icons.mjs` (encodeur PNG maison avec `zlib`) | Aucune dépendance d'image ; regénérer avec `npm run icons -w apps/web` |
+| 2026-11-04 | Conteneur fourni aux écrans via un contexte React (`ContainerProvider` / `useContainer`) | Injection sans import de l'infrastructure ; les tests injectent des faux |
 
 > Ajouter une ligne à chaque décision structurante.
