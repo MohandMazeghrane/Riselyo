@@ -7,6 +7,7 @@ import type {
 import { defaultConsents, type ConsentSet } from '../../src/domain/entities/consent';
 import type { BackupRepository } from '../../src/domain/ports/backupRepository';
 import type { ConsentRepository } from '../../src/domain/ports/consentRepository';
+import type { LocalDataEraser } from '../../src/domain/ports/localDataEraser';
 import type { BodyMeasurements } from '../../src/domain/entities/bodyMeasurements';
 import type { Habit, HabitTemplateId } from '../../src/domain/entities/habit';
 import type { LifeWheel } from '../../src/domain/entities/lifeWheel';
@@ -177,5 +178,26 @@ export class InMemoryBackupRepository extends FakeStore implements BackupReposit
     return this.attempt(() => {
       this.restored = content;
     });
+  }
+}
+
+export class InMemoryLocalDataEraser implements LocalDataEraser {
+  readonly calls: string[] = [];
+  failing: 'database' | 'caches' | null = null;
+
+  eraseDatabase(): Promise<Result<void, DomainError>> {
+    return this.erase('database');
+  }
+
+  eraseCaches(): Promise<Result<void, DomainError>> {
+    return this.erase('caches');
+  }
+
+  private erase(part: 'database' | 'caches'): Promise<Result<void, DomainError>> {
+    if (this.failing === part) {
+      return Promise.resolve(err(domainError('storage_failure', `simulated ${part} failure`)));
+    }
+    this.calls.push(part);
+    return Promise.resolve(ok(undefined));
   }
 }

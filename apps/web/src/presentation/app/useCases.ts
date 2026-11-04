@@ -34,6 +34,7 @@ import { createUpdateConsent, type UpdateConsent } from '../../application/priva
 import { createExportBackup, type ExportBackup } from '../../application/privacy/exportBackup';
 import { createExportDaysCsv, type ExportDaysCsv } from '../../application/privacy/exportDaysCsv';
 import { createImportBackup, type ImportBackup } from '../../application/privacy/importBackup';
+import { createEraseAllData, type EraseAllData } from '../../application/privacy/eraseAllData';
 import { createGetCheckInDay, type GetCheckInDay } from '../../application/checkin/getCheckInDay';
 import {
   createSubmitEveningCheckIn,
@@ -80,6 +81,7 @@ export interface PrivacyUseCases {
   readonly exportBackup: ExportBackup;
   readonly exportDaysCsv: ExportDaysCsv;
   readonly importBackup: ImportBackup;
+  readonly eraseAllData: EraseAllData;
 }
 
 export interface CheckInUseCases {
@@ -120,6 +122,7 @@ export function createUseCases(adapters: AppAdapters): AppContainer {
       exportBackup: createExportBackup(adapters),
       exportDaysCsv: createExportDaysCsv(adapters),
       importBackup: createImportBackup(adapters),
+      eraseAllData: createEraseAllData(adapters),
     },
     checkIn: {
       getDay: createGetCheckInDay(adapters),

@@ -84,6 +84,16 @@ export const fr = {
     },
     importFailed:
       'La restauration n’a pas pu se faire : rien n’a été changé. Réessaie dans un instant.',
+    eraseTitle: 'Tout supprimer',
+    eraseIntro:
+      'Efface de ce téléphone ton profil, tes check-ins, habitudes, mesures, roue de vie et consentements. C’est définitif : exporte une sauvegarde avant si tu veux garder une trace.',
+    eraseStart: 'Tout supprimer…',
+    eraseConfirmWord: 'SUPPRIMER',
+    eraseConfirmLabel: 'Pour confirmer, écris SUPPRIMER',
+    eraseConfirm: 'Effacer définitivement',
+    eraseCancel: 'Annuler',
+    erasing: 'Suppression…',
+    eraseFailed: 'La suppression n’a pas pu aller jusqu’au bout. Réessaie dans un instant.',
     csv: {
       date: 'Date',
       bedtime: 'Coucher',

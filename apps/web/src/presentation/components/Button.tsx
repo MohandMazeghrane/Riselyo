@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
-type Variant = 'primary' | 'secondary';
+type Variant = 'primary' | 'secondary' | 'danger';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   readonly variant?: Variant;
@@ -11,6 +11,8 @@ const BASE =
 
 const VARIANTS: Record<Variant, string> = {
   primary: 'bg-brand-600 text-white active:bg-brand-700',
+  /** Irreversible actions only (erasing data). */
+  danger: 'bg-red-700 text-white active:bg-red-800',
   secondary: 'bg-white text-brand-700 ring-1 ring-slate-300 active:bg-brand-50',
 };
 

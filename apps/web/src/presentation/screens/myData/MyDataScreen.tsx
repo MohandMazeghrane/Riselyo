@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { ROUTES } from '../../app/routes';
 import { PageLayout } from '../../components/PageLayout';
 import { fr } from '../../content/fr';
+import { EraseSection } from './EraseSection';
 import { ExportSection } from './ExportSection';
 import { ImportSection } from './ImportSection';
 
@@ -11,6 +12,7 @@ export function MyDataScreen(): ReactNode {
     <PageLayout title={fr.myData.title} backTo={ROUTES.profile}>
       <ExportSection />
       <ImportSection />
+      <EraseSection />
     </PageLayout>
   );
 }
