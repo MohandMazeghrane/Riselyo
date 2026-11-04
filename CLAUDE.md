@@ -11,7 +11,7 @@
 
 | Phase | Statut | Avancement | Critère de passage |
 | --- | --- | --- | --- |
-| 1 — Socle et suivi de base | 🚧 En cours | 6 / 16 | 7 jours d'usage réel sans bug bloquant |
+| 1 — Socle et suivi de base | 🚧 En cours | 7 / 16 | 7 jours d'usage réel sans bug bloquant |
 | 2 — Coach IA et Apple Santé | 🔒 Bloquée | 0 / 13 | Coach jugé utile, coût réel < 1 € sur 2 semaines, import Santé fiable 7 jours |
 | 3 — Moteur et bilans | 🔒 Bloquée | 0 / 8 | 3 bilans hebdo d'affilée sans chiffre faux |
 | 4 — Finitions | 🔒 Bloquée | 0 / 9 | Lighthouse PWA ≥ 90, audit sécurité et RGPD (sections 11 et 12) validé |
@@ -22,8 +22,8 @@ Le détail des tâches (cases à cocher) est en **section 16**. Les compteurs ci
 ### En ce moment
 
 - **Phase en cours** : 1
-- **Tâche en cours** : — (1.1 à 1.6 terminées)
-- **Prochaine tâche** : 1.7 — Écran de consentements (A6, entre A5 et Aujourd'hui) + Profil → Confidentialité ; le domaine et le repository des consentements existent déjà (1.5)
+- **Tâche en cours** : — (1.1 à 1.7 terminées)
+- **Prochaine tâche** : 1.8 — Check-ins matin et soir en boutons (section 3 du cahier des charges)
 - **Bloquants / questions ouvertes** :
   - L'installation sur iPhone ne sera testable qu'après le déploiement (1.16) : il faut une URL en HTTPS.
   - « Maquette v1 » citée par le cahier des charges absente du dépôt : à ajouter dans `docs/` si disponible (utile pour l'écran Aujourd'hui, 1.10).
@@ -44,6 +44,10 @@ _Format : `- [date] description — impact — piste de correction`._
 - [2026-11-04] Bundle JS de 313 Ko (102 Ko gzippé) dont Dexie et React Router — sous la cible « < 2 s en 4G » mais à surveiller — découper par route (lazy) si besoin, audit en 4.9.
 - [2026-11-04] Libellés du radar petits à 320 px (≈ 8 px) — les notes sont aussi listées en texte sous le radar — revoir avec la maquette ou en 3.3 (onglet Progrès).
 - [2026-11-04] CSP `connect-src 'self'` — l'origine du Worker devra y être ajoutée en 2.1 (le test `securityHeaders.test.ts` le rappellera).
+- [2026-11-04] Les consentements sont enregistrés mais rien ne les lit encore (IA, Santé, notifications n'existent pas) — chaque fonction concernée (2.2, 2.11, 4.2) devra vérifier `isGranted` avant tout envoi, et la révocation devra stopper le traitement (ex. désabonnement push, purge KV).
+- [2026-11-04] Activer « Notifications » ne demande pas encore l'autorisation du navigateur — prévu en 4.2.
+- [2026-11-04] Profil minimal (Confidentialité, Besoin d'aide) atteint par un lien « Profil » sur l'accueil — remplacé par la barre d'onglets en 1.10.
+- [2026-11-04] `HelpScreen` garde sa propre mise en page au lieu de `PageLayout` — doublon mineur — l'aligner quand on y touchera (1.11).
 
 ### Journal des sessions
 
@@ -55,6 +59,7 @@ _Format : `- [date] description — impact — piste de correction`._
 | 2026-11-04 | PR Dependabot traitées (#1 fusionnée, #2 appliquée sur `main`, #3 #4 #6 fermées) ; 1.4 : secretlint en pré-commit et dans `npm run check` (blocage vérifié avec un faux jeton), `_headers` (CSP stricte, HSTS…) testé et appliqué en preview, aucune violation CSP | 44 tests | `ec80300`, `95fa7f7`, `7b790f7` | Rien (les en-têtes seront actifs après le déploiement 1.16) |
 | 2026-11-04 | 1.5 : schéma Dexie v1 (17 tables, v1 figée par un test), harnais de migration (`upToVersion`), entité `Consent` (refus par défaut, `aiJournal` dépend de `ai`), `DexieConsentRepository` | 64 tests, couverture domaine + application 100 % | `29528b0`, `bea2426`, `9960e10` | Rien (pas encore d'écran qui écrit en base) |
 | 2026-11-04 | Cahier des charges ajouté (`docs/`) ; couleur alignée sur #2563B8 ; 1.6 : onboarding partie A (A0 à A5) — domaine en TDD, 8 cas d'usage, schéma v2 (`lifeWheels`) + migration testée, 4 repositories, React Router 7, écrans + page « Besoin d'aide » ; règle ESLint « présentation → domaine : types seulement » | 175 tests, couverture domaine + application 99,5 % ; parcours complet vérifié dans le navigateur à 375 et 320 px, reprise après rechargement, données relues dans IndexedDB | `bb04e2d` … `160c19a` | Après le déploiement (1.16) : faire l'onboarding complet, quitter l'app en cours de route et vérifier la reprise, tester les liens 3114 / 15 / 112 |
+| 2026-11-04 | 1.7 : écran A6 (7e étape de l'onboarding, tout désactivé par défaut, journal verrouillé sans IA), Profil minimal, Profil → Confidentialité (enregistrement immédiat, date affichée, révocation en cascade) ; conteneur construit par `createUseCases` | 201 tests ; vérifié dans le navigateur à 375 et 320 px (utilisateur existant renvoyé sur A6, dates, révocation) | `4c63023`, `8dcc81b` | Après le déploiement (1.16) : valider l'écran A6, puis changer un choix dans Profil → Confidentialité et vérifier la date |
 
 ---
 
@@ -569,7 +574,7 @@ Chaque phase se termine par une app **utilisable et déployée**. Cocher les cas
 - [x] 1.4 En-têtes de sécurité (`_headers`, CSP) et scan de secrets en pré-commit
 - [x] 1.5 Schéma Dexie v1 + repositories + tests de migration
 - [x] 1.6 Onboarding partie A (formulaire, roue de vie, horaires) — sans IA
-- [ ] 1.7 Écran de consentements + Profil → Confidentialité
+- [x] 1.7 Écran de consentements + Profil → Confidentialité
 - [ ] 1.8 Check-ins matin et soir en boutons
 - [ ] 1.9 Habitudes à 3 paliers + boutons rapides
 - [ ] 1.10 Écran Aujourd'hui
@@ -694,6 +699,8 @@ Une tâche n'est terminée que si :
 | 2026-11-04 | React Router 7 (la v8 exige React 19, ignorée par Dependabot) | Stack prévue section 3, compatible React 18 |
 | 2026-11-04 | La présentation n'importe du domaine que des types (règle `boundaries`) ; façade `application/onboarding/onboardingForm.ts` pour les listes et calculs en direct | Applique la section 4 à la lettre et la vérifie automatiquement |
 | 2026-11-04 | Jour 0 = jour de validation de l'écran A0 ; mesures et roue de vie datées du jour 0 ; objectifs datés du jour du choix | Une seule « photo de départ » cohérente pour les comparaisons |
+| 2026-11-04 | Consentements : A6 est la 7e étape de l'onboarding ; un refus est aussi une décision datée ; Confidentialité enregistre chaque interrupteur immédiatement | Section 12 : consentement explicite, révocable, avec sa date ; un utilisateur déjà inscrit est renvoyé sur A6 |
+| 2026-11-04 | Profil minimal créé dès la 1.7 (lien depuis l'accueil) | La section 12 place Confidentialité dans Profil ; la barre d'onglets arrive en 1.10 |
 | 2026-11-04 | Lecture des enregistrements Dexie via `asFields` + règles du domaine ; profil illisible = erreur de stockage, habitude illisible = ignorée | Aucune donnée corrompue affichée comme valide, sans dépendance supplémentaire |
 | 2026-11-04 | Conteneur fourni aux écrans via un contexte React (`ContainerProvider` / `useContainer`) | Injection sans import de l'infrastructure ; les tests injectent des faux |
 
