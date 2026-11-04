@@ -8,6 +8,8 @@ import type { Result } from '../shared/result';
 export interface DayEntryRepository {
   /** Null for a day without any check-in yet. */
   findByDay(day: DayKey): Promise<Result<DayEntry | null, DomainError>>;
+  /** Every entry from `day` (included) onwards; an unreadable entry is skipped. */
+  listSince(day: DayKey): Promise<Result<DayEntry[], DomainError>>;
   /** Replaces the entry of the same day. */
   save(entry: DayEntry): Promise<Result<void, DomainError>>;
 }

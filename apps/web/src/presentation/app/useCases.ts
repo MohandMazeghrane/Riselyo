@@ -53,6 +53,10 @@ import { createGetHabitPlan, type GetHabitPlan } from '../../application/habits/
 import { createGetTodayHabits, type GetTodayHabits } from '../../application/habits/getTodayHabits';
 import { createLogHabitLevel, type LogHabitLevel } from '../../application/habits/logHabitLevel';
 import { createStopHabit, type StopHabit } from '../../application/habits/stopHabit';
+import {
+  createGetWellbeingSignal,
+  type GetWellbeingSignal,
+} from '../../application/safety/getWellbeingSignal';
 import type { AppAdapters } from './appRepositories';
 
 export interface OnboardingUseCases {
@@ -95,6 +99,7 @@ export interface AppContainer {
   readonly privacy: PrivacyUseCases;
   readonly checkIn: CheckInUseCases;
   readonly habits: HabitUseCases;
+  readonly safety: { readonly getWellbeingSignal: GetWellbeingSignal };
 }
 
 /** Wires the use cases to whatever adapters are given (Dexie in the app, fakes in tests). */
@@ -113,6 +118,7 @@ export function createUseCases(adapters: AppAdapters): AppContainer {
       submitEvening: createSubmitEveningCheckIn(adapters),
     },
     habits: createHabitUseCases(adapters),
+    safety: { getWellbeingSignal: createGetWellbeingSignal(adapters) },
   };
 }
 

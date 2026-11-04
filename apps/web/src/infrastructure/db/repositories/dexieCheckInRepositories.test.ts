@@ -79,6 +79,18 @@ describe('DexieDayEntryRepository', () => {
     );
   });
 
+  it('lists the days since a given day, skipping damaged ones', async () => {
+    const repository = new DexieDayEntryRepository(db);
+    unwrap(await repository.save(FULL_DAY));
+    unwrap(await repository.save({ ...FULL_DAY, day: OTHER_DAY }));
+    await db.table('dayEntries').put({ date: '2026-11-07', morning: { energy: 9 }, evening: null });
+
+    expect(unwrap(await repository.listSince(OTHER_DAY))).toEqual([
+      { ...FULL_DAY, day: OTHER_DAY },
+    ]);
+    expect(unwrap(await repository.listSince(DAY))).toHaveLength(2);
+  });
+
   it('reports a damaged day instead of showing wrong answers', async () => {
     await db.table('dayEntries').put({ date: DAY, morning: { energy: 9 }, evening: null });
 
@@ -94,6 +106,7 @@ describe('DexieDayEntryRepository', () => {
 
     expect((await repository.findByDay(DAY)).ok).toBe(false);
     expect((await repository.save(FULL_DAY)).ok).toBe(false);
+    expect((await repository.listSince(DAY)).ok).toBe(false);
   });
 });
 

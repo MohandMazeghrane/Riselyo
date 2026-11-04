@@ -119,6 +119,10 @@ export class InMemoryDayEntryRepository extends FakeStore implements DayEntryRep
     return this.attempt(() => this.entries.get(day) ?? null);
   }
 
+  listSince(day: DayKey): Promise<Result<DayEntry[], DomainError>> {
+    return this.attempt(() => [...this.entries.values()].filter((entry) => entry.day >= day));
+  }
+
   save(entry: DayEntry): Promise<Result<void, DomainError>> {
     return this.attempt(() => {
       this.entries.set(entry.day, entry);

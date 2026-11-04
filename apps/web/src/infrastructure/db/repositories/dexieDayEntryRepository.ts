@@ -21,6 +21,17 @@ export class DexieDayEntryRepository implements DayEntryRepository {
     return entry === null ? err(unreadableRecord('dayEntries')) : ok(entry);
   }
 
+  async listSince(day: DayKey): Promise<Result<DayEntry[], DomainError>> {
+    const read = await storageResult('could not read the days', () =>
+      this.db.table('dayEntries').where('date').aboveOrEqual(day).toArray(),
+    );
+    if (!read.ok) {
+      return read;
+    }
+    const records: unknown[] = read.value;
+    return ok(records.map(fromDayEntryRecord).filter((entry) => entry !== null));
+  }
+
   save(entry: DayEntry): Promise<Result<void, DomainError>> {
     return storageResult('could not save the day', async () => {
       await this.db.table('dayEntries').put(toDayEntryRecord(entry));
