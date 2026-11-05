@@ -1,0 +1,14 @@
+// Front-end hosting: the built PWA served as static assets by Cloudflare (no server code).
+// The name must match the Cloudflare project. The future API Worker (apps/worker) will have its own name.
+{
+  "name": "riselyo",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./apps/web/dist",
+    // Unknown paths (/profil, /check-in/soir…) are handled by the app's router.
+    "not_found_handling": "single-page-application",
+  },
+  "observability": {
+    "enabled": false,
+  },
+}
