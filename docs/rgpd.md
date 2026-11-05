@@ -1,6 +1,6 @@
 # Riselyo — Registre des traitements (RGPD)
 
-> Tenu à jour à chaque nouvelle donnée (`CLAUDE.md`, section 12). Dernière mise à jour : **2026-11-04** (tâche 1.15).
+> Tenu à jour à chaque nouvelle donnée (`CLAUDE.md`, section 12). Dernière mise à jour : **2026-11-04** (tâche 1.16).
 > Riselyo est utilisée par une seule personne, pour elle-même : l'exemption domestique du RGPD s'applique en principe. Comme l'app traite des **données de santé** (article 9) et fera transiter certaines données par des prestataires américains, les principes du RGPD sont appliqués comme pour une app publique.
 
 ## Responsable et personne concernée
@@ -44,12 +44,12 @@ Jamais collecté : calories, poids envoyé à l'IA, cycle, ECG, localisation, no
 
 ## Sous-traitants et transferts hors UE
 
-| Prestataire             | Rôle                              | Pays       | Données concernées                                                      | État             |
-| ----------------------- | --------------------------------- | ---------- | ----------------------------------------------------------------------- | ---------------- |
-| Cloudflare (Pages)      | Hébergement des fichiers de l'app | États-Unis | Aucune donnée personnelle (journaux techniques Cloudflare : adresse IP) | À partir de 1.16 |
-| Cloudflare (Worker, KV) | Relais IA, push, transit Santé    | États-Unis | Voir « Traitements prévus »                                             | Phase 2          |
-| OpenAI                  | Rédaction des textes du coach     | États-Unis | Prénom et résumés chiffrés                                              | Phase 2          |
-| GitHub                  | Code source                       | États-Unis | **Aucune** (aucune donnée personnelle dans le dépôt)                    | En service       |
+| Prestataire                              | Rôle                              | Pays       | Données concernées                                                      | État              |
+| ---------------------------------------- | --------------------------------- | ---------- | ----------------------------------------------------------------------- | ----------------- |
+| Cloudflare (Workers, fichiers statiques) | Hébergement des fichiers de l'app | États-Unis | Aucune donnée personnelle (journaux techniques Cloudflare : adresse IP) | En service (1.16) |
+| Cloudflare (Worker, KV)                  | Relais IA, push, transit Santé    | États-Unis | Voir « Traitements prévus »                                             | Phase 2           |
+| OpenAI                                   | Rédaction des textes du coach     | États-Unis | Prénom et résumés chiffrés                                              | Phase 2           |
+| GitHub                                   | Code source                       | États-Unis | **Aucune** (aucune donnée personnelle dans le dépôt)                    | En service        |
 
 À vérifier **avant** la phase 2 : durée de conservation des requêtes API chez OpenAI et non-utilisation pour l'entraînement (paramètres du compte API), localisation et durée des journaux Cloudflare.
 
