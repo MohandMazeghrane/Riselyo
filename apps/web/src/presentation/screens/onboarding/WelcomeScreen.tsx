@@ -7,6 +7,7 @@ import { StepForm } from '../../components/StepForm';
 import { TextField } from '../../components/TextField';
 import { fr } from '../../content/fr';
 import { useSubmit } from '../../hooks/useSubmit';
+import { InstallCard } from '../install/InstallCard';
 import { WithOnboardingStatus } from './WithOnboardingStatus';
 
 /** Screen A0. */
@@ -35,6 +36,7 @@ function WelcomeForm({ initialFirstName }: { readonly initialFirstName: string }
       error={submission.error}
       invalidMessage={fr.welcome.firstNameRequired}
     >
+      <InstallCard />
       <p>{fr.welcome.intro}</p>
       <FirstNameField value={firstName} onChange={setFirstName} />
       <SafetyNote />

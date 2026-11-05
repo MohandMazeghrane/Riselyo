@@ -11,6 +11,7 @@ export const ROUTES = {
   privacy: '/profil/confidentialite',
   habits: '/profil/habitudes',
   myData: '/profil/donnees',
+  install: '/profil/installer',
   morningCheckIn: '/check-in/matin',
   eveningCheckIn: '/check-in/soir',
   welcome: '/demarrage',

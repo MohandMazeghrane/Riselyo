@@ -60,6 +60,26 @@ export const fr = {
     habitsHint: 'Paliers, ajouts et pauses',
     myData: 'Mes données',
     myDataHint: 'Ce qui est gardé, exporter, tout supprimer',
+    install: 'Installer sur l’iPhone',
+    installHint: 'Une icône sur l’écran d’accueil, comme une app',
+  },
+  install: {
+    title: 'Installer Riselyo',
+    cardTitle: 'Installe Riselyo sur ton iPhone',
+    cardText:
+      'Une icône sur ton écran d’accueil, l’app en plein écran et, plus tard, les rappels. Ça prend 20 secondes.',
+    cardLink: 'Voir comment faire',
+    installed: 'Riselyo est déjà installée sur cet appareil. Tu peux l’ouvrir depuis son icône.',
+    iosIntro: 'Dans Safari, en trois gestes :',
+    iosSteps: [
+      'Touche le bouton Partager (le carré avec une flèche vers le haut), en bas de l’écran.',
+      'Fais défiler et choisis « Sur l’écran d’accueil ».',
+      'Touche « Ajouter » : l’icône Riselyo apparaît sur ton écran d’accueil.',
+    ],
+    iosNote:
+      'Ouvre ensuite Riselyo depuis cette icône. Tes données restent sur ce téléphone : celles saisies dans Safari ne passent pas dans l’app installée, exporte-les d’abord si besoin (Profil → Mes données).',
+    otherIntro:
+      'Sur un ordinateur ou un téléphone Android, ouvre le menu du navigateur et choisis « Installer l’application » ou « Ajouter à l’écran d’accueil ».',
   },
   myData: {
     title: 'Mes données',

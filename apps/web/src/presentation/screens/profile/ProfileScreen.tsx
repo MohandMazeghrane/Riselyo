@@ -8,6 +8,7 @@ const ENTRIES = [
   { to: ROUTES.habits, label: fr.profile.habits, hint: fr.profile.habitsHint },
   { to: ROUTES.privacy, label: fr.profile.privacy, hint: fr.profile.privacyHint },
   { to: ROUTES.myData, label: fr.profile.myData, hint: fr.profile.myDataHint },
+  { to: ROUTES.install, label: fr.profile.install, hint: fr.profile.installHint },
   { to: ROUTES.help, label: fr.profile.help, hint: fr.profile.helpHint },
 ] as const;
 
